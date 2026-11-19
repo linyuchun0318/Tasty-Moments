@@ -100,7 +100,7 @@ body {
   box-shadow: 0 16px 40px rgba(0,0,0,0.12);
 }
 
-/* 手機小螢幕適配 (Mobile Responsive) */
+/* 手機小螢幕適配 */
 @media (max-width: 480px) {
   body {
     padding: 0;
@@ -380,7 +380,13 @@ body {
   border-color: #A7F3D0;
 }
 
-/* 需求 1：自主決定飲食提醒卡（非按鈕樣式） */
+.card-badge.badge-warning {
+  background-color: #FEF3C7;
+  color: #92400E;
+  border-color: #FCD34D;
+}
+
+/* 自主決定飲食提醒卡 */
 .elder-autonomy-note {
   display: flex;
   align-items: flex-start;
@@ -401,7 +407,7 @@ body {
   flex-shrink: 0;
 }
 
-/* 需求 2：資料庫醒目呈現與縮小查詢副標題 */
+/* 資料庫醒目呈現與縮小查詢副標題 */
 .database-highlight-box {
   background: #F8FAFC;
   border: 1.5px solid #CBD5E1;
@@ -624,7 +630,7 @@ body {
   height: 300px;
 }
 
-/* 高齡友善直式高對比題目卡片與層級色彩 */
+/* 題目逐步展開卡片 */
 .clarify-step-box {
   background: #FFFFFF;
   border: var(--border-width) solid var(--border-color);
@@ -667,7 +673,7 @@ body {
   color: #111827;
 }
 
-/* 直式大卡片選項，高對比、色彩分級、長者極易判讀 */
+/* 直式選項卡片 */
 .option-vertical-list {
   display: flex;
   flex-direction: column;
@@ -736,7 +742,6 @@ body {
   margin-top: 2px;
 }
 
-/* 選中狀態高對比 */
 .elder-option-card.selected {
   border-color: #059669;
   background-color: #ECFDF5;
@@ -760,7 +765,6 @@ body {
   color: #047857;
 }
 
-/* 語音回答與跳過按鈕之分明區隔 */
 .action-sub-row {
   display: flex;
   gap: 10px;
@@ -824,7 +828,7 @@ body {
   margin-bottom: 6px;
 }
 
-/* 聯絡人清單 */
+/* 聯絡人清單與分享成功標籤 */
 .list-group {
   display: flex;
   flex-direction: column;
@@ -873,6 +877,48 @@ body {
   font-weight: 800;
   color: #111827;
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.shared-tag {
+  font-size: 13px;
+  font-weight: 800;
+  color: #065F46;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.unshared-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B7280;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.share-success-banner {
+  background: #ECFDF5;
+  border: 1.5px solid #059669;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #065F46;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
 }
 
 /* 聊天對話區 */
@@ -914,7 +960,7 @@ body {
   margin-bottom: 4px;
 }
 
-/* 需求 3：未收到分享之空狀態卡片 */
+/* 未收到分享之空狀態卡片 */
 .chat-empty-state {
   background: #FFFFFF;
   border: var(--border-width) solid var(--border-color);

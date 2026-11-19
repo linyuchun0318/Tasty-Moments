@@ -346,7 +346,7 @@
               </ul>
             </li>
             <li><strong>調味與鈉含量計算依據：</strong>
-              <p>依據您補充之調味條件（<span id="basis-cond-display">蒸的、少許醬油、少許水煮油</span>），推估每餐鈉含量約為 <span id="basis-sodium-range">350～450 毫克</span>（國健署建議每日鈉攝取上限 2400 毫克，本餐約佔 16%，屬清淡適中）。系統不憑外觀斷定「吃太鹹」，呈現推估依據供您參考。</p>
+              <p id="basis-sodium-explain-para">依據您補充之調味條件（<span id="basis-cond-display">蒸的、少許醬油、少許水煮油</span>），推估每餐鈉含量約為 <span id="basis-sodium-range">350～450 毫克</span>（國健署建議每日鈉攝取上限 2400 毫克，本餐約佔 16%，屬清淡適中）。系統不憑外觀斷定「吃太鹹」，呈現推估依據供您參考。</p>
             </li>
           </ul>
         </div>
@@ -385,7 +385,7 @@
     <!-- 9. 分享預覽 -->
     <section class="app-screen" id="screen-share">
       <div class="card-box mb-14">
-        <div class="card-title" id="share-recipient-title">接收者：家人 A</div>
+        <div class="card-title" id="share-recipient-title">接收者：家人A</div>
         <button type="button" class="btn-large btn-primary mb-10" id="btn-open-recipient-modal" style="font-size: 18px; min-height: 50px;">選擇分享對象</button>
       </div>
 
@@ -502,25 +502,26 @@
     <!-- 11. 聊天室聯絡人清單 -->
     <section class="app-screen" id="screen-chat-list">
       <div class="card-title mb-14">聊天室</div>
+      <div id="chat-list-share-banner" class="share-success-banner" style="display: none;"></div>
       <div class="list-group">
         <div class="list-item contact-list-item" data-contact="家人A">
           <div class="avatar-circle">家人A</div>
-          <div class="contact-name">家人A</div>
+          <div class="contact-name">家人A <span class="contact-status-tag" id="tag-家人A"></span></div>
           <span style="font-size: 20px; font-weight: 800;">&gt;</span>
         </div>
         <div class="list-item contact-list-item" data-contact="家人B">
           <div class="avatar-circle">家人B</div>
-          <div class="contact-name">家人B</div>
+          <div class="contact-name">家人B <span class="contact-status-tag" id="tag-家人B"></span></div>
           <span style="font-size: 20px; font-weight: 800;">&gt;</span>
         </div>
         <div class="list-item contact-list-item" data-contact="家人C">
           <div class="avatar-circle">家人C</div>
-          <div class="contact-name">家人C</div>
+          <div class="contact-name">家人C <span class="contact-status-tag" id="tag-家人C"></span></div>
           <span style="font-size: 20px; font-weight: 800;">&gt;</span>
         </div>
         <div class="list-item contact-list-item" data-contact="AI助手">
           <div class="avatar-circle ai-avatar">AI</div>
-          <div class="contact-name">AI助手</div>
+          <div class="contact-name">AI助手 <span class="contact-status-tag" id="tag-AI助手"></span></div>
           <span style="font-size: 20px; font-weight: 800;">&gt;</span>
         </div>
       </div>
@@ -641,16 +642,16 @@
         
         <div class="recipient-checklist">
           <label class="recipient-check-item">
-            <input type="checkbox" name="recipient" value="家人 A" checked>
-            <span class="recipient-check-name">家人 A</span>
+            <input type="checkbox" name="recipient" value="家人A" checked>
+            <span class="recipient-check-name">家人A</span>
           </label>
           <label class="recipient-check-item">
-            <input type="checkbox" name="recipient" value="家人 B">
-            <span class="recipient-check-name">家人 B</span>
+            <input type="checkbox" name="recipient" value="家人B">
+            <span class="recipient-check-name">家人B</span>
           </label>
           <label class="recipient-check-item">
-            <input type="checkbox" name="recipient" value="家人 C">
-            <span class="recipient-check-name">家人 C</span>
+            <input type="checkbox" name="recipient" value="家人C">
+            <span class="recipient-check-name">家人C</span>
           </label>
           <label class="recipient-check-item">
             <input type="checkbox" name="recipient" value="AI助手">
