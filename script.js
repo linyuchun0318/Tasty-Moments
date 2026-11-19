@@ -2,7 +2,7 @@
 // 核心互動邏輯
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 畫面元素
+  // 畫面元素清單
   const screens = {
     login: document.getElementById('screen-login'),
     register: document.getElementById('screen-register'),
@@ -14,17 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
     action: document.getElementById('screen-action'),
     share: document.getElementById('screen-share'),
     diary: document.getElementById('screen-diary'),
+    diaryDetail: document.getElementById('screen-diary-detail'),
     chatList: document.getElementById('screen-chat-list'),
     chatDetail: document.getElementById('screen-chat-detail'),
   };
 
   const modalAiRefine = document.getElementById('modal-ai-refine');
+  const mainAppHeader = document.getElementById('main-app-header');
   const headerBackBtn = document.getElementById('header-back-btn');
   const headerTitle = document.getElementById('header-title');
   const bottomNav = document.getElementById('bottom-nav');
   const navItems = document.querySelectorAll('.nav-item');
 
-  // 角色按鈕
+  // 角色切換按鈕
   const roleElderBtn = document.getElementById('role-elder-btn');
   const roleFamilyBtn = document.getElementById('role-family-btn');
 
@@ -33,13 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let historyStack = [];
   let currentRole = 'elder'; // 'elder' | 'family'
   let currentChosenText = '這餐要不要試試少加一點醬？';
-  let hasVoiceCorrected = false;
-  let sharedMealData = {
-    name: '豆腐、青菜、白飯',
-    portion: '半碗飯',
-    status: '已確認：豆腐、半碗飯',
-    unknown: '仍未知：用油量、醬汁配方'
-  };
 
   // 畫面標題對照表 (全數取自 PDF 與 Figma)
   const screenTitles = {
@@ -53,15 +48,17 @@ document.addEventListener('DOMContentLoaded', () => {
     'screen-action': '紀錄處理',
     'screen-share': '分享預覽',
     'screen-diary': '餐食日記',
+    'screen-diary-detail': '詳細資料',
     'screen-chat-list': '聊天室',
     'screen-chat-detail': '家人A'
   };
 
   // 切換畫面函式
   function navigateTo(targetId, addToHistory = true) {
-    if (!screens[targetId.replace('screen-', '')] && !document.getElementById(targetId)) return;
+    const targetScreen = document.getElementById(targetId);
+    if (!targetScreen) return;
 
-    if (addToHistory && currentScreenId) {
+    if (addToHistory && currentScreenId && currentScreenId !== targetId) {
       historyStack.push(currentScreenId);
     }
 
@@ -73,10 +70,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 顯示目標畫面
-    const targetScreen = document.getElementById(targetId);
-    if (targetScreen) {
-      targetScreen.classList.add('active');
-      targetScreen.scrollTop = 0;
+    targetScreen.classList.add('active');
+    targetScreen.scrollTop = 0;
+
+    // 更新頂欄顯示狀態 (需求2：第一頁初始畫面不重複出現「呷好食光」)
+    if (mainAppHeader) {
+      if (targetId === 'screen-login' || targetId === 'screen-camera') {
+        mainAppHeader.style.display = 'none';
+      } else {
+        mainAppHeader.style.display = 'flex';
+      }
     }
 
     // 更新標題
@@ -105,9 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const navTarget = item.getAttribute('data-target');
         if (navTarget === targetId) {
           item.classList.add('active');
-        } else if (targetId.startsWith('screen-candidate') || targetId.startsWith('screen-clarify') || targetId.startsWith('screen-explanation') || targetId.startsWith('screen-action') || targetId.startsWith('screen-share')) {
-          if (navTarget === 'screen-camera') item.classList.add('active');
-          else item.classList.remove('active');
+        } else if (targetId === 'screen-diary-detail' && navTarget === 'screen-diary') {
+          item.classList.add('active');
+        } else if ((targetId.startsWith('screen-candidate') || targetId.startsWith('screen-clarify') || targetId.startsWith('screen-explanation') || targetId.startsWith('screen-action') || targetId.startsWith('screen-share')) && navTarget === 'screen-camera') {
+          item.classList.add('active');
         } else {
           item.classList.remove('active');
         }
@@ -165,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 1. 登入畫面互動 (使用 Google / Facebook / LINE 登入直接進入主畫面)
+  // 1. 登入畫面互動 (點擊 Google / 臉書 / LINE 登入進入主畫面)
   const loginButtons = document.querySelectorAll('.btn-login-action');
   loginButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -221,8 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCameraShutter = document.getElementById('btn-camera-shutter');
   if (btnCameraShutter) {
     btnCameraShutter.addEventListener('click', () => {
-      // 拍照後進入初步辨識畫面
-      hasVoiceCorrected = false;
       resetCandidateDisplay();
       navigateTo('screen-candidate');
     });
@@ -247,8 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCandidateVoiceFix = document.getElementById('btn-candidate-voice-fix');
   if (btnCandidateVoiceFix) {
     btnCandidateVoiceFix.addEventListener('click', () => {
-      // 模擬語音修正 (PDF: 說「這是豆腐」)
-      hasVoiceCorrected = true;
       const candidateTextElem = document.getElementById('candidate-dishes-text');
       const candidateVoiceFeedback = document.getElementById('candidate-voice-feedback');
       if (candidateTextElem) {
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (candidateVoiceFeedback) {
         candidateVoiceFeedback.textContent = '這是豆腐';
-        candidateVoiceFeedback.style.display = 'block';
+        candidateVoiceFeedback.style.display = 'inline-block';
       }
     });
   }
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnVoiceAnswer.addEventListener('click', () => {
       if (clarifyAnswerFeedback) {
         clarifyAnswerFeedback.textContent = '豆腐是蒸的';
-        clarifyAnswerFeedback.style.display = 'block';
+        clarifyAnswerFeedback.style.display = 'inline-block';
       }
     });
   }
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSkipQuestion.addEventListener('click', () => {
       if (clarifyAnswerFeedback) {
         clarifyAnswerFeedback.textContent = '不知道／略過';
-        clarifyAnswerFeedback.style.display = 'block';
+        clarifyAnswerFeedback.style.display = 'inline-block';
       }
     });
   }
@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const shareRecipients = ['接收者：家人 A', '接收者：家人 B', '接收者：家人 C'];
   let recipientIndex = 0;
   const shareRecipientTitle = document.querySelector('#screen-share .card-title');
-  const btnChangeRecipient = document.querySelector('#screen-share button[style*="font-size: 16px"]');
+  const btnChangeRecipient = document.querySelector('#screen-share button[style*="font-size: 17px"]');
   if (btnChangeRecipient && shareRecipientTitle) {
     btnChangeRecipient.addEventListener('click', () => {
       recipientIndex = (recipientIndex + 1) % shareRecipients.length;
@@ -370,7 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnShareConfirm = document.getElementById('btn-share-confirm');
   if (btnShareConfirm) {
     btnShareConfirm.addEventListener('click', () => {
-      // 成功分享至家人A聊天室
       navigateTo('screen-chat-detail');
     });
   }
@@ -389,7 +388,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 9. 聊天室聯絡人清單 (Chat List)
+  // 9. 餐食日記詳細資料按鈕互動 (需求8)
+  const detailDateTitle = document.getElementById('detail-date-title');
+  const diaryDetailButtons = document.querySelectorAll('.btn-view-diary-detail');
+  diaryDetailButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const dateStr = e.currentTarget.getAttribute('data-date') || '11/10';
+      if (detailDateTitle) {
+        detailDateTitle.textContent = `${dateStr} 詳細資料`;
+      }
+      navigateTo('screen-diary-detail');
+    });
+  });
+
+  const btnBackToDiary = document.getElementById('btn-back-to-diary');
+  if (btnBackToDiary) {
+    btnBackToDiary.addEventListener('click', () => {
+      navigateTo('screen-diary');
+    });
+  }
+
+  // 10. 聊天室聯絡人清單 (Chat List)
   const contactItems = document.querySelectorAll('.contact-list-item');
   contactItems.forEach(item => {
     item.addEventListener('click', () => {
@@ -397,14 +416,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 10. 聊天室對話與回覆互動 (Chat Detail)
+  // 11. 聊天室對話與回覆互動 (Chat Detail)
   // 使用者可於聊天頁面查看其他用戶傳來的餐食照片與資訊，可以「直接回覆」或「請ai協助潤飾語氣」
   const chatInput = document.getElementById('chat-input-text');
   const btnDirectReply = document.getElementById('btn-direct-reply');
   const btnAiRefine = document.getElementById('btn-ai-refine');
   const chatMessagesContainer = document.getElementById('chat-messages-container');
 
-  // 直接回覆按鈕
   if (btnDirectReply) {
     btnDirectReply.addEventListener('click', () => {
       const messageText = chatInput.value.trim() || '不要再淋醬了';
@@ -413,7 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 請ai協助潤飾語氣 (開啟 AI 彈窗)
   if (btnAiRefine) {
     btnAiRefine.addEventListener('click', () => {
       if (modalAiRefine) {
@@ -466,7 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 新增聊天訊息氣泡
   function appendChatMessage(text, type) {
     if (!chatMessagesContainer) return;
     const bubble = document.createElement('div');
@@ -476,6 +492,6 @@ document.addEventListener('DOMContentLoaded', () => {
     chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
   }
 
-  // 初始化預設畫面
+  // 初始化畫面為登入畫面
   navigateTo('screen-login', false);
 });
