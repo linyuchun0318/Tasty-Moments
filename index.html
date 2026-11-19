@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <!-- 手機外框容器 (已依需求改寬) -->
+  <!-- 手機外框容器 (寬度 520px) -->
   <div class="phone-container">
     
     <!-- 手機狀態列 -->
@@ -26,27 +26,19 @@
       <span>5G ●●● 100%</span>
     </div>
 
-    <!-- 導覽頂欄 (初始畫面依需求2不重複出現標題) -->
+    <!-- 導覽頂欄 (初始畫面不重複出現「呷好食光」) -->
     <header class="app-header" id="main-app-header" style="display: none;">
       <button type="button" class="header-back-btn" id="header-back-btn">&lt; 返回上一頁</button>
       <div class="header-title" id="header-title">呷好食光</div>
       <div class="header-placeholder"></div>
     </header>
 
-    <!-- 1. 登入帳號畫面 (Figma Section 1) -->
+    <!-- 1. 登入帳號畫面 (使用附檔真實 Logo) -->
     <section class="app-screen active" id="screen-login">
-      <!-- 品牌標誌與文字橫排對齊 (Figma Section 1) -->
+      <!-- 品牌標誌與文字橫排對齊 -->
       <div class="auth-hero-row">
         <div class="auth-logo-box">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100" height="100" rx="20" fill="#FFFFFF"/>
-            <path d="M22 52 C22 75 78 75 78 52 Z" fill="#FFFFFF" stroke="#1F2937" stroke-width="4"/>
-            <ellipse cx="50" cy="52" rx="28" ry="10" fill="#FEF3C7" stroke="#1F2937" stroke-width="3"/>
-            <!-- 綠葉與米飯 -->
-            <path d="M42 46 C38 34 46 26 48 22" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
-            <path d="M54 46 C50 34 58 26 60 22" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
-            <line x1="20" y1="40" x2="80" y2="30" stroke="#78350F" stroke-width="4" stroke-linecap="round"/>
-          </svg>
+          <img src="logo_app.png" alt="呷好食光" class="auth-logo-img">
         </div>
         <div class="auth-brand-text">
           <div class="auth-brand-title">呷好食光</div>
@@ -57,17 +49,12 @@
       <!-- 登入帳號標籤 -->
       <div class="auth-section-label">登入帳號</div>
 
-      <!-- 三大登入選項（精準對齊圖示與修正 LINE 圖案） -->
+      <!-- 三大登入選項（替換為使用者提供之官方圖案附檔） -->
       <div class="list-group mb-14">
         <!-- Google 登入 -->
         <button type="button" class="btn-auth-item btn-auth-google btn-login-action">
           <div class="btn-auth-icon-wrap">
-            <svg width="30" height="30" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-            </svg>
+            <img src="logo_google.jpg" alt="Google" class="auth-icon-img">
           </div>
           <span class="btn-auth-text">使用Google登入</span>
         </button>
@@ -75,42 +62,32 @@
         <!-- 臉書 登入 -->
         <button type="button" class="btn-auth-item btn-auth-fb btn-login-action">
           <div class="btn-auth-icon-wrap">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="5" fill="#1877F2"/>
-              <path d="M16.5 12h-2.5v8h-3.5v-8h-2v-3h2V7.2c0-2.1 1.2-3.2 3.3-3.2H16v3h-1.8c-.8 0-1 .4-1 1V9h3.3l-.5 3z" fill="#FFFFFF"/>
-            </svg>
+            <img src="logo_facebook.webp" alt="Facebook" class="auth-icon-img">
           </div>
           <span class="btn-auth-text">使用臉書登入</span>
         </button>
 
-        <!-- LINE 登入 (完整綠底白字 LINE 對話框官方標誌) -->
+        <!-- LINE 登入 -->
         <button type="button" class="btn-auth-item btn-auth-line btn-login-action">
           <div class="btn-auth-icon-wrap">
-            <svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 4C9.716 4 3 9.716 3 16.768c0 4.316 2.532 8.134 6.469 10.395-.283 1.055-.914 3.829-1.047 4.417-.168.747.273.737.575.538 2.378-1.573 5.488-3.793 6.305-4.382.551.08 1.118.12 1.698.12 8.284 0 15-5.716 15-12.768C33 9.716 26.284 4 18 4z" fill="#00C300"/>
-              <path d="M11 13.5v6.5h3.2v-1.3H12.5v-5.2H11zm4.8 0v6.5h1.5v-6.5h-1.5zm3.5 0v6.5h1.5l2.6-3.8v3.8h1.5v-6.5h-1.5l-2.6 3.8v-3.8h-1.5zm7.2 0v6.5h3.8v-1.3h-2.3v-1.3h2.1v-1.3h-2.1v-1.3h2.3v-1.3h-3.8z" fill="#FFFFFF"/>
-            </svg>
+            <img src="logo_line.jpg" alt="LINE" class="auth-icon-img">
           </div>
           <span class="btn-auth-text">使用LINE登入</span>
         </button>
       </div>
 
-      <!-- 分隔線與註冊提示 (Figma Section 1) -->
+      <!-- 分隔線與註冊提示 -->
       <hr class="auth-divider">
 
       <div class="auth-prompt-text">第一次使用嗎? 請先點擊下方註冊帳號</div>
       <button type="button" class="btn-large btn-primary" id="btn-goto-register">立即註冊</button>
     </section>
 
-    <!-- 2. 註冊帳號畫面 (Figma 畫面 2) -->
+    <!-- 2. 註冊帳號畫面 -->
     <section class="app-screen" id="screen-register">
       <div class="auth-hero-row mb-18">
         <div class="auth-logo-box">
-          <svg viewBox="0 0 100 100" fill="none">
-            <rect width="100" height="100" rx="20" fill="#FFFFFF"/>
-            <path d="M22 52 C22 75 78 75 78 52 Z" fill="#FFFFFF" stroke="#1F2937" stroke-width="4"/>
-            <ellipse cx="50" cy="52" rx="28" ry="10" fill="#FEF3C7" stroke="#1F2937" stroke-width="3"/>
-          </svg>
+          <img src="logo_app.png" alt="呷好食光" class="auth-logo-img">
         </div>
         <div class="auth-brand-text">
           <div class="auth-brand-title">呷好食光</div>
@@ -120,32 +97,21 @@
       <div class="list-group mb-18">
         <button type="button" class="btn-auth-item btn-auth-google btn-register-action">
           <div class="btn-auth-icon-wrap">
-            <svg width="30" height="30" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-            </svg>
+            <img src="logo_google.jpg" alt="Google" class="auth-icon-img">
           </div>
           <span class="btn-auth-text">使用Google註冊</span>
         </button>
 
         <button type="button" class="btn-auth-item btn-auth-fb btn-register-action">
           <div class="btn-auth-icon-wrap">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="5" fill="#1877F2"/>
-              <path d="M16.5 12h-2.5v8h-3.5v-8h-2v-3h2V7.2c0-2.1 1.2-3.2 3.3-3.2H16v3h-1.8c-.8 0-1 .4-1 1V9h3.3l-.5 3z" fill="#FFFFFF"/>
-            </svg>
+            <img src="logo_facebook.webp" alt="Facebook" class="auth-icon-img">
           </div>
           <span class="btn-auth-text">使用臉書註冊</span>
         </button>
 
         <button type="button" class="btn-auth-item btn-auth-line btn-register-action">
           <div class="btn-auth-icon-wrap">
-            <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
-              <path d="M18 4C9.716 4 3 9.716 3 16.768c0 4.316 2.532 8.134 6.469 10.395-.283 1.055-.914 3.829-1.047 4.417-.168.747.273.737.575.538 2.378-1.573 5.488-3.793 6.305-4.382.551.08 1.118.12 1.698.12 8.284 0 15-5.716 15-12.768C33 9.716 26.284 4 18 4z" fill="#00C300"/>
-              <path d="M11 13.5v6.5h3.2v-1.3H12.5v-5.2H11zm4.8 0v6.5h1.5v-6.5h-1.5zm3.5 0v6.5h1.5l2.6-3.8v3.8h1.5v-6.5h-1.5l-2.6 3.8v-3.8h-1.5zm7.2 0v6.5h3.8v-1.3h-2.3v-1.3h2.1v-1.3h-2.1v-1.3h2.3v-1.3h-3.8z" fill="#FFFFFF"/>
-            </svg>
+            <img src="logo_line.jpg" alt="LINE" class="auth-icon-img">
           </div>
           <span class="btn-auth-text">使用LINE註冊</span>
         </button>
@@ -154,7 +120,7 @@
       <button type="button" class="btn-large btn-primary" id="btn-register-back">&lt; 返回上一頁</button>
     </section>
 
-    <!-- 3. 主畫面選單 (Figma 畫面 3) -->
+    <!-- 3. 主畫面選單 -->
     <section class="app-screen" id="screen-dashboard">
       <div class="menu-stack">
         <button type="button" class="btn-large btn-primary" id="btn-menu-camera">拍攝餐食</button>
@@ -163,7 +129,7 @@
       </div>
     </section>
 
-    <!-- 4. 拍攝畫面 / 拍攝頁面 (Figma 畫面 4) -->
+    <!-- 4. 拍攝畫面 / 拍攝頁面 -->
     <section class="app-screen" id="screen-camera">
       <div class="camera-container">
         <div class="camera-header">拍攝畫面</div>
@@ -181,8 +147,7 @@
       </div>
     </section>
 
-    <!-- 5. 初步辨識候選畫面 (Figma 畫面 5 & PDF 畫面 A 拍攝與辨識) -->
-    <!-- 需求4、5：照片替換為真實照片，稱呼改為「尚未經您確認」 -->
+    <!-- 5. 初步辨識候選畫面 -->
     <section class="app-screen" id="screen-candidate">
       <div class="food-photo-card">
         <img src="meal.jpg" alt="真實餐食照片">
@@ -207,44 +172,97 @@
       </div>
     </section>
 
-    <!-- 6. 提問與確認頁面 (PDF 畫面 B 菜色與份量確認) -->
+    <!-- 6. 提問與確認頁面 (支援多題接續確認與份量選擇聯動) -->
     <section class="app-screen" id="screen-clarify">
       <div class="card-box mb-14">
         <div class="card-title">菜色與份量確認</div>
         <div class="card-text">修正後菜色：豆腐、青菜、白飯</div>
       </div>
 
+      <!-- 份量選擇 (點選切換：半碗飯 / 一碗飯 / 少於半碗) -->
       <div class="card-box mb-14">
         <div class="card-title">實際吃了多少？</div>
         <button type="button" class="btn-large btn-primary mb-10" id="btn-portion-select">半碗飯 / 可修改</button>
+        <div class="card-badge" id="portion-status-badge">已選擇：半碗飯</div>
       </div>
 
-      <div class="card-box mb-14">
-        <div class="card-title">豆腐是煎的還是蒸的？</div>
-        <div class="btn-row mb-10">
-          <button type="button" class="btn-large btn-primary" id="btn-voice-answer">語音回答</button>
-          <button type="button" class="btn-large btn-primary" id="btn-skip-question">不知道／略過</button>
+      <!-- 連續確認問題 1：烹調方式 -->
+      <div class="clarify-step-box" id="clarify-q1-box">
+        <div class="card-title">問題 1：豆腐是煎的還是蒸的？</div>
+        <div class="option-grid">
+          <button type="button" class="option-btn q1-opt selected" data-val="蒸的">蒸的</button>
+          <button type="button" class="option-btn q1-opt" data-val="煎的">煎的</button>
         </div>
-        <div class="card-badge" id="clarify-answer-feedback" style="display: none; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;"></div>
+        <div class="btn-row">
+          <button type="button" class="btn-large btn-primary" id="btn-q1-voice">語音回答</button>
+          <button type="button" class="btn-large btn-primary" id="btn-q1-skip">不知道／略過</button>
+        </div>
+        <div class="card-badge" id="q1-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：蒸的</div>
+      </div>
+
+      <!-- 連續確認問題 2：醬油用量 (需求7) -->
+      <div class="clarify-step-box" id="clarify-q2-box">
+        <div class="card-title">問題 2：料理時加入了多少醬油？</div>
+        <div class="option-grid">
+          <button type="button" class="option-btn q2-opt selected" data-val="少許／一茶匙">少許／一茶匙</button>
+          <button type="button" class="option-btn q2-opt" data-val="正常鹹度">正常鹹度</button>
+          <button type="button" class="option-btn q2-opt" data-val="偏鹹／很多">偏鹹／很多</button>
+          <button type="button" class="option-btn q2-opt" data-val="未加醬油">未加醬油</button>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn-large btn-primary" id="btn-q2-voice">語音回答</button>
+          <button type="button" class="btn-large btn-primary" id="btn-q2-skip">不知道／略過</button>
+        </div>
+        <div class="card-badge" id="q2-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：少許／一茶匙</div>
+      </div>
+
+      <!-- 連續確認問題 3：用油量 (需求7) -->
+      <div class="clarify-step-box" id="clarify-q3-box">
+        <div class="card-title">問題 3：料理時加入了多少油？</div>
+        <div class="option-grid">
+          <button type="button" class="option-btn q3-opt selected" data-val="少許水煮油">少許水煮油</button>
+          <button type="button" class="option-btn q3-opt" data-val="正常用油">正常用油</button>
+          <button type="button" class="option-btn q3-opt" data-val="偏油／多油炒">偏油／多油炒</button>
+          <button type="button" class="option-btn q3-opt" data-val="無油清蒸">無油清蒸</button>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn-large btn-primary" id="btn-q3-voice">語音回答</button>
+          <button type="button" class="btn-large btn-primary" id="btn-q3-skip">不知道／略過</button>
+        </div>
+        <div class="card-badge" id="q3-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：少許水煮油</div>
       </div>
 
       <button type="button" class="btn-large btn-accent" id="btn-clarify-confirm">確認菜色與份量</button>
     </section>
 
-    <!-- 7. 來源與說明 (PDF 畫面 C 來源與說明) -->
+    <!-- 7. 來源與說明 (需求6、8：聯動份量與照片模擬詳細估算數據) -->
     <section class="app-screen" id="screen-explanation">
       <div class="card-box mb-14">
         <div class="card-title">來源與說明</div>
-        <div class="card-text">已確認：豆腐、半碗飯</div>
-        <div class="card-text">仍未知：用油量、醬汁配方</div>
-        <div class="card-text">系統依確認資訊查詢資料</div>
-        <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法估算鈉含量</div>
+        <div class="card-text" id="explanation-confirmed-text" style="font-size: 20px; font-weight: 800; color: #047857;">已確認：豆腐、半碗飯</div>
+        <div class="card-text" id="explanation-cooking-text">已補充：蒸的、少許醬油、少許水煮油</div>
+        <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法精確估算鈉含量</div>
       </div>
 
+      <!-- 需求8：依餐食照片模擬資料來源與估算數據 -->
       <div class="card-box mb-14">
-        <button type="button" class="btn-large btn-primary mb-10" id="btn-toggle-basis">查看資料來源與估算依據</button>
-        <div id="basis-detail-box" style="display: none; font-size: 17px; line-height: 1.5; color: #374151; padding: 10px; background: #F9FAFB; border-radius: 10px;">
-          選用哪個資料庫項目、份量假設、來源日期；未知油量、醬汁列出。
+        <button type="button" class="btn-large btn-primary mb-10" id="btn-toggle-basis">查看資料來源與估算數據</button>
+        <div class="basis-simulation-card" id="basis-detail-box" style="display: none;">
+          <h4>依據餐食照片與確認資訊之估算說明：</h4>
+          <ul>
+            <li><strong>照片辨識食物品項：</strong>傳統板豆腐（約100g）、炒空心菜（約100g）、白米飯（<span id="basis-portion-display">半碗飯</span>）。</li>
+            <li><strong>資料來源：</strong>衛生福利部國民健康署「台灣常用食品營養成分資料庫」及高齡衛教指引。</li>
+            <li><strong>熱量與主要營養推估：</strong>
+              <ul>
+                <li>白米飯（<span id="basis-cal-portion">半碗飯</span>）：約提供 <span id="basis-calories">140</span> 大卡熱量與碳水化合物。</li>
+                <li>傳統板豆腐：提供優質大豆植物蛋白質（約 8.5 克）與鈣質（約 140 毫克），質地細緻好吞嚥。</li>
+                <li>空心菜：提供豐富膳食纖維（約 2.1 克）與鉀離子，有益腸道機能。</li>
+              </ul>
+            </li>
+            <li><strong>調味與估算假設限制：</strong>
+              <p>由於醬油滲透量與炒菜用油無法僅憑平面影像測量，系統依您補充之條件（<span id="basis-cond-display">蒸的、少許醬油、少許水煮油</span>）進行推估。依衛教原則，不憑外觀斷定「吃太鹹」，保留未知以維護評估客觀性。</p>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -257,7 +275,7 @@
       <button type="button" class="btn-large btn-accent" id="btn-explanation-next">下一步</button>
     </section>
 
-    <!-- 8. 紀錄處理 (PDF 畫面 D 紀錄處理) -->
+    <!-- 8. 紀錄處理 -->
     <section class="app-screen" id="screen-action">
       <div class="card-box mb-18">
         <div class="card-title text-center">這筆紀錄要如何處理？</div>
@@ -274,17 +292,17 @@
       </div>
     </section>
 
-    <!-- 9. 分享預覽 (PDF 畫面 E 分享預覽) -->
+    <!-- 9. 分享預覽 (需求9：選擇分享對象並彈出多選清單) -->
     <section class="app-screen" id="screen-share">
       <div class="card-box mb-14">
-        <div class="card-title">接收者：家人 A</div>
-        <button type="button" class="btn-large btn-primary mb-10" style="font-size: 17px; min-height: 48px;">變更分享對象</button>
+        <div class="card-title" id="share-recipient-title">接收者：家人 A</div>
+        <button type="button" class="btn-large btn-primary mb-10" id="btn-open-recipient-modal" style="font-size: 18px; min-height: 50px;">選擇分享對象</button>
       </div>
 
       <div class="card-box mb-14">
         <div class="card-title">分享內容：餐食照片與文字</div>
-        <div class="card-text">已確認：豆腐、半碗飯</div>
-        <div class="card-text">仍未知：用油量、醬汁配方</div>
+        <div class="card-text" id="share-portion-info">已確認：豆腐、半碗飯</div>
+        <div class="card-text" id="share-seasoning-info">烹調方式：蒸的、少許醬油</div>
         <div class="card-badge">確認後才提供對方查看</div>
       </div>
 
@@ -295,11 +313,10 @@
       </div>
     </section>
 
-    <!-- 10. 餐食日記畫面 (需求6、7、8：真實照片、只顯示已確認之菜名、增加詳細資料按鈕) -->
+    <!-- 10. 餐食日記畫面 -->
     <section class="app-screen" id="screen-diary">
       <div class="card-title mb-14">餐食日記</div>
 
-      <!-- 11/10 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/10</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -309,7 +326,6 @@
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/10">詳細資料</button>
       </div>
 
-      <!-- 11/9 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/9</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -319,7 +335,6 @@
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/9">詳細資料</button>
       </div>
 
-      <!-- 11/5 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/5</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -329,7 +344,6 @@
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/5">詳細資料</button>
       </div>
 
-      <!-- 11/4 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/4</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -340,22 +354,20 @@
       </div>
     </section>
 
-    <!-- 10-B. 餐食日記詳細資料畫面 (需求8：放大餐食照片+羅列當日紀錄之資訊) -->
+    <!-- 10-B. 餐食日記詳細資料畫面 -->
     <section class="app-screen" id="screen-diary-detail">
       <div class="card-title mb-14" id="detail-date-title">11/10 詳細資料</div>
 
-      <!-- 放大餐食照片 -->
       <div class="food-photo-card photo-enlarged">
         <img src="meal.jpg" alt="放大餐食照片">
       </div>
 
-      <!-- 羅列當日紀錄之資訊 (嚴格依 PDF 文字規格) -->
       <div class="card-box mb-14">
         <div class="card-title">餐食菜色與份量確認</div>
         <div class="card-text">已確認：豆腐、青菜、白飯</div>
-        <div class="card-text">實際吃了多少？半碗飯</div>
-        <div class="card-text">豆腐是煎的還是蒸的？蒸的</div>
-        <div class="card-text" style="color: #6B7280;">仍未知：用油量、醬汁配方</div>
+        <div class="card-text" id="diary-detail-portion">實際食用份量：半碗飯</div>
+        <div class="card-text" id="diary-detail-method">烹調方式：蒸的</div>
+        <div class="card-text" style="color: #6B7280;">調味資訊：少許醬油、少許水煮油</div>
       </div>
 
       <div class="card-box mb-14">
@@ -363,7 +375,7 @@
         <div class="card-text">系統依確認資訊查詢資料</div>
         <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法估算鈉含量</div>
         <div class="card-text" style="font-size: 16px; color: #4B5563;">
-          選用哪個資料庫項目、份量假設、來源日期；未知油量、醬汁列出。
+          選用台灣常用食品營養成分資料庫項目；未知油量、醬汁保留未知。
         </div>
       </div>
 
@@ -376,7 +388,7 @@
       <button type="button" class="btn-large btn-primary" id="btn-back-to-diary">&lt; 返回餐食日記</button>
     </section>
 
-    <!-- 11. 聊天室聯絡人清單 (Figma 畫面) -->
+    <!-- 11. 聊天室聯絡人清單 -->
     <section class="app-screen" id="screen-chat-list">
       <div class="card-title mb-14">聊天室</div>
       <div class="list-group">
@@ -396,35 +408,45 @@
           <span style="font-size: 20px; font-weight: 800;">&gt;</span>
         </div>
         <div class="list-item contact-list-item" data-contact="AI助手">
-          <div class="avatar-circle" style="background-color: #DCFCE7; color: #166534;">AI</div>
+          <div class="avatar-circle ai-avatar">AI</div>
           <div class="contact-name">AI助手</div>
           <span style="font-size: 20px; font-weight: 800;">&gt;</span>
         </div>
       </div>
     </section>
 
-    <!-- 12. 聊天頁面 (Figma 畫面 & PDF 畫面 F 家人回應) -->
+    <!-- 12. 聊天頁面 (需求5、10、11：依對象名稱顯示、長者/家屬視角切換、AI助手專屬禮貌回覆) -->
     <section class="app-screen" id="screen-chat-detail">
-      <div class="card-badge" id="chat-role-title">家人端｜收到分享後</div>
+      <div class="card-badge" id="chat-perspective-badge">長者端視角｜林陳桂華 女士</div>
 
       <div class="chat-messages" id="chat-messages-container">
-        <!-- 其他用戶傳來的餐食照片與資訊 -->
-        <div class="chat-bubble bubble-received">
-          <div class="card-text" style="font-weight: 800;">分享內容：餐食照片與文字</div>
-          <div class="food-photo-card" style="margin: 8px 0;">
-            <img src="meal.jpg" alt="真實餐食照片" style="height: 180px;">
-          </div>
-          <div class="card-text" style="font-weight: 800;">已確認：豆腐、半碗飯</div>
-          <div class="card-text" style="font-size: 16px; color: #4B5563;">仍未知：用油量、醬汁配方</div>
-        </div>
+        <!-- 訊息泡泡將由 JS 根據視角與對象動態產生 -->
       </div>
 
-      <!-- 聊天回覆輸入區 -->
-      <div class="chat-input-area">
-        <textarea class="chat-textarea" id="chat-input-text" placeholder="輸入回覆...">不要再淋醬了</textarea>
-        <div class="btn-row">
-          <button type="button" class="btn-large btn-primary" id="btn-direct-reply">直接回覆</button>
-          <button type="button" class="btn-large btn-accent" id="btn-ai-refine">請ai協助潤飾語氣</button>
+      <!-- 聊天輸入與操作區 (依對象與視角動態調整) -->
+      <div class="chat-input-area" id="chat-input-container">
+        <!-- 家屬端之回覆與潤飾按鈕區塊 -->
+        <div id="family-input-controls">
+          <textarea class="chat-textarea" id="chat-input-text" placeholder="輸入回覆...">不要再淋醬了</textarea>
+          <div class="btn-row">
+            <button type="button" class="btn-large btn-primary" id="btn-direct-reply">直接回覆</button>
+            <button type="button" class="btn-large btn-accent" id="btn-ai-refine">請ai協助潤飾語氣</button>
+          </div>
+        </div>
+
+        <!-- 長者端之輸入控制 -->
+        <div id="elder-input-controls" style="display: none;">
+          <textarea class="chat-textarea" id="chat-elder-input-text" placeholder="輸入訊息...">謝謝關心！今天的青菜也很甜。</textarea>
+          <div class="btn-row">
+            <button type="button" class="btn-large btn-primary" id="btn-elder-voice-reply">語音輸入</button>
+            <button type="button" class="btn-large btn-accent" id="btn-elder-send-reply">直接發送</button>
+          </div>
+        </div>
+
+        <!-- AI助手專屬之長者提問輸入控制 (需求11：無家人潤飾按鈕) -->
+        <div id="ai-input-controls" style="display: none;">
+          <textarea class="chat-textarea" id="chat-ai-input-text" placeholder="向 AI 助手提問餐食建議..."></textarea>
+          <button type="button" class="btn-large btn-accent" id="btn-ai-ask-reply">送出提問</button>
         </div>
       </div>
     </section>
@@ -463,7 +485,7 @@
       </button>
     </nav>
 
-    <!-- 13. AI 協助修改語氣彈窗 (PDF 畫面 F 家人回應) -->
+    <!-- 13. AI 協助修改語氣彈窗 (PDF 畫面 F) -->
     <div class="modal-overlay" id="modal-ai-refine">
       <div class="modal-window">
         <div class="modal-title">家人回應</div>
@@ -499,6 +521,38 @@
         <p class="modal-note">
           介面內容為示例；AI 改寫由發話者本人確認後送出。
         </p>
+      </div>
+    </div>
+
+    <!-- 14. 選擇分享對象之多選列表彈窗 (需求9) -->
+    <div class="modal-overlay" id="modal-recipients">
+      <div class="modal-window">
+        <div class="modal-title">選擇分享對象</div>
+        <p class="card-text text-center" style="font-size: 16px; color: #4B5563;">可一次勾選多位對象進行分享：</p>
+        
+        <div class="recipient-checklist">
+          <label class="recipient-check-item">
+            <input type="checkbox" name="recipient" value="家人 A" checked>
+            <span class="recipient-check-name">家人 A</span>
+          </label>
+          <label class="recipient-check-item">
+            <input type="checkbox" name="recipient" value="家人 B">
+            <span class="recipient-check-name">家人 B</span>
+          </label>
+          <label class="recipient-check-item">
+            <input type="checkbox" name="recipient" value="家人 C">
+            <span class="recipient-check-name">家人 C</span>
+          </label>
+          <label class="recipient-check-item">
+            <input type="checkbox" name="recipient" value="AI助手">
+            <span class="recipient-check-name">AI助手</span>
+          </label>
+        </div>
+
+        <div class="btn-row mt-10">
+          <button type="button" class="btn-large btn-accent" id="btn-confirm-recipients">確認選擇</button>
+          <button type="button" class="btn-large btn-primary" id="btn-cancel-recipients">取消</button>
+        </div>
       </div>
     </div>
 

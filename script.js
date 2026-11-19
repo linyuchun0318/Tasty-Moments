@@ -1,5 +1,5 @@
 // 呷好食光 - 高齡者日常餐食辨識與家庭飲食支持系統
-// 核心互動邏輯
+// 核心互動與狀態聯動邏輯
 
 document.addEventListener('DOMContentLoaded', () => {
   // 畫面元素清單
@@ -20,23 +20,39 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const modalAiRefine = document.getElementById('modal-ai-refine');
+  const modalRecipients = document.getElementById('modal-recipients');
   const mainAppHeader = document.getElementById('main-app-header');
   const headerBackBtn = document.getElementById('header-back-btn');
   const headerTitle = document.getElementById('header-title');
   const bottomNav = document.getElementById('bottom-nav');
   const navItems = document.querySelectorAll('.nav-item');
 
-  // 角色切換按鈕
+  // 頂部角色按鈕
   const roleElderBtn = document.getElementById('role-elder-btn');
   const roleFamilyBtn = document.getElementById('role-family-btn');
 
-  // 狀態管理
+  // 全域狀態
   let currentScreenId = 'screen-login';
   let historyStack = [];
   let currentRole = 'elder'; // 'elder' | 'family'
+  let activeContact = '家人A'; // 當前聊天對象
   let currentChosenText = '這餐要不要試試少加一點醬？';
 
-  // 畫面標題對照表 (全數取自 PDF 與 Figma)
+  // 份量與調味聯動狀態 (需求6、7、8)
+  let chosenPortion = '半碗飯';
+  let cookingMethod = '蒸的';
+  let soySauceAmount = '少許／一茶匙';
+  let oilAmount = '少許水煮油';
+  let selectedRecipients = ['家人 A'];
+
+  // 對話紀錄狀態存儲
+  let familyReplies = {
+    '家人A': '這餐要不要試試少加一點醬？',
+    '家人B': '媽，今天吃得好清淡健康！',
+    '家人C': '阿嬤，記得湯不要喝太鹹喔！'
+  };
+
+  // 畫面標題對照表
   const screenTitles = {
     'screen-login': '呷好食光',
     'screen-register': '呷好食光',
@@ -73,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     targetScreen.classList.add('active');
     targetScreen.scrollTop = 0;
 
-    // 更新頂欄顯示狀態 (需求2：第一頁初始畫面不重複出現「呷好食光」)
+    // 初始畫面不重複出現「呷好食光」
     if (mainAppHeader) {
       if (targetId === 'screen-login' || targetId === 'screen-camera') {
         mainAppHeader.style.display = 'none';
@@ -82,9 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 更新標題
+    // 更新標題 (若在聊天室則顯示對象名稱，需求10)
     if (headerTitle) {
-      headerTitle.textContent = screenTitles[targetId] || '呷好食光';
+      if (targetId === 'screen-chat-detail') {
+        headerTitle.textContent = activeContact;
+      } else {
+        headerTitle.textContent = screenTitles[targetId] || '呷好食光';
+      }
     }
 
     // 更新返回按鈕顯示
@@ -96,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 更新底部導覽列顯示與選中狀態
+    // 更新底部導覽列
     if (bottomNav) {
       if (targetId === 'screen-login' || targetId === 'screen-register' || targetId === 'screen-camera') {
         bottomNav.style.display = 'none';
@@ -116,6 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
           item.classList.remove('active');
         }
       });
+    }
+
+    // 當切換到聊天詳情頁時，刷新渲染視角
+    if (targetId === 'screen-chat-detail') {
+      renderChatDetailView();
     }
   }
 
@@ -141,35 +166,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 角色切換
+  // 頂部角色切換 (需求5：聯動聊天室視角)
   if (roleElderBtn && roleFamilyBtn) {
     roleElderBtn.addEventListener('click', () => {
       currentRole = 'elder';
       roleElderBtn.classList.add('active');
       roleFamilyBtn.classList.remove('active');
-      updateRoleView();
+      if (currentScreenId === 'screen-chat-detail') {
+        renderChatDetailView();
+      }
     });
 
     roleFamilyBtn.addEventListener('click', () => {
       currentRole = 'family';
       roleFamilyBtn.classList.add('active');
       roleElderBtn.classList.remove('active');
-      updateRoleView();
+      if (currentScreenId === 'screen-chat-detail') {
+        renderChatDetailView();
+      }
     });
   }
 
-  function updateRoleView() {
-    const chatTitleElem = document.getElementById('chat-role-title');
-    if (chatTitleElem) {
-      if (currentRole === 'family') {
-        chatTitleElem.textContent = '家人端｜收到分享後';
-      } else {
-        chatTitleElem.textContent = '長者端｜分享與交流';
-      }
-    }
-  }
-
-  // 1. 登入畫面互動 (點擊 Google / 臉書 / LINE 登入進入主畫面)
+  // 1. 登入畫面
   const loginButtons = document.querySelectorAll('.btn-login-action');
   loginButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -198,8 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. 主畫面 (Dashboard) 互動
-  // 按「拍攝餐食」→ 螢幕換成「拍攝頁面」
+  // 2. 主畫面
   const btnMenuCamera = document.getElementById('btn-menu-camera');
   if (btnMenuCamera) {
     btnMenuCamera.addEventListener('click', () => {
@@ -221,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. 拍攝畫面 (Camera Screen) 互動
+  // 3. 拍攝畫面
   const btnCameraShutter = document.getElementById('btn-camera-shutter');
   if (btnCameraShutter) {
     btnCameraShutter.addEventListener('click', () => {
@@ -230,8 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. 初步辨識畫面 (Candidate) 互動
-  // 按「是的，下一步」→切換到 「提問與確認頁面」
+  // 4. 初步辨識畫面
   const btnCandidateNext = document.getElementById('btn-candidate-next');
   if (btnCandidateNext) {
     btnCandidateNext.addEventListener('click', () => {
@@ -273,47 +289,216 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 5. 提問與確認頁面 (Clarify) 互動
+  // 5. 提問與確認頁面 (份量選擇聯動 + 連續問答 需求6、7)
   const btnPortionSelect = document.getElementById('btn-portion-select');
-  const portionOptions = ['半碗飯 / 可修改', '一碗飯 / 可修改', '少於半碗 / 可修改'];
+  const portionStatusBadge = document.getElementById('portion-status-badge');
+  const portionOptions = ['半碗飯', '一碗飯', '少於半碗'];
   let portionIndex = 0;
+
+  function updatePortionState(index) {
+    portionIndex = index;
+    chosenPortion = portionOptions[portionIndex];
+    if (btnPortionSelect) btnPortionSelect.textContent = `${chosenPortion} / 可修改`;
+    if (portionStatusBadge) portionStatusBadge.textContent = `已選擇：${chosenPortion}`;
+    syncPortionToAllScreens();
+  }
+
   if (btnPortionSelect) {
     btnPortionSelect.addEventListener('click', () => {
-      portionIndex = (portionIndex + 1) % portionOptions.length;
-      btnPortionSelect.textContent = portionOptions[portionIndex];
+      const nextIdx = (portionIndex + 1) % portionOptions.length;
+      updatePortionState(nextIdx);
     });
   }
 
-  const btnVoiceAnswer = document.getElementById('btn-voice-answer');
-  const btnSkipQuestion = document.getElementById('btn-skip-question');
-  const clarifyAnswerFeedback = document.getElementById('clarify-answer-feedback');
+  // 同步份量至來源說明、分享預覽、日記詳細、聊天室 (需求6)
+  function syncPortionToAllScreens() {
+    // 來源與說明
+    const expConfirmed = document.getElementById('explanation-confirmed-text');
+    if (expConfirmed) expConfirmed.textContent = `已確認：豆腐、${chosenPortion}`;
 
-  if (btnVoiceAnswer) {
-    btnVoiceAnswer.addEventListener('click', () => {
-      if (clarifyAnswerFeedback) {
-        clarifyAnswerFeedback.textContent = '豆腐是蒸的';
-        clarifyAnswerFeedback.style.display = 'inline-block';
+    const basisPortionDisplay = document.getElementById('basis-portion-display');
+    if (basisPortionDisplay) basisPortionDisplay.textContent = chosenPortion;
+
+    const basisCalPortion = document.getElementById('basis-cal-portion');
+    if (basisCalPortion) basisCalPortion.textContent = chosenPortion;
+
+    const basisCalories = document.getElementById('basis-calories');
+    if (basisCalories) {
+      if (chosenPortion === '一碗飯') basisCalories.textContent = '280';
+      else if (chosenPortion === '半碗飯') basisCalories.textContent = '140';
+      else basisCalories.textContent = '90';
+    }
+
+    // 分享預覽
+    const sharePortionInfo = document.getElementById('share-portion-info');
+    if (sharePortionInfo) sharePortionInfo.textContent = `已確認：豆腐、${chosenPortion}`;
+
+    // 日記詳細
+    const diaryDetailPortion = document.getElementById('diary-detail-portion');
+    if (diaryDetailPortion) diaryDetailPortion.textContent = `實際食用份量：${chosenPortion}`;
+  }
+
+  // 問題 1 互動 (豆腐是煎的還是蒸的)
+  const q1Buttons = document.querySelectorAll('.q1-opt');
+  const q1Feedback = document.getElementById('q1-feedback');
+  q1Buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      q1Buttons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      cookingMethod = btn.getAttribute('data-val');
+      if (q1Feedback) {
+        q1Feedback.textContent = `已確認：${cookingMethod}`;
+        q1Feedback.style.display = 'inline-block';
       }
+      syncCookingDetails();
+    });
+  });
+
+  const btnQ1Voice = document.getElementById('btn-q1-voice');
+  if (btnQ1Voice) {
+    btnQ1Voice.addEventListener('click', () => {
+      cookingMethod = '蒸的';
+      q1Buttons.forEach(b => b.classList.remove('selected'));
+      if (q1Buttons[0]) q1Buttons[0].classList.add('selected');
+      if (q1Feedback) {
+        q1Feedback.textContent = '語音輸入已確認：豆腐是蒸的';
+        q1Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
     });
   }
 
-  if (btnSkipQuestion) {
-    btnSkipQuestion.addEventListener('click', () => {
-      if (clarifyAnswerFeedback) {
-        clarifyAnswerFeedback.textContent = '不知道／略過';
-        clarifyAnswerFeedback.style.display = 'inline-block';
+  const btnQ1Skip = document.getElementById('btn-q1-skip');
+  if (btnQ1Skip) {
+    btnQ1Skip.addEventListener('click', () => {
+      cookingMethod = '烹調方式未知';
+      q1Buttons.forEach(b => b.classList.remove('selected'));
+      if (q1Feedback) {
+        q1Feedback.textContent = '已略過';
+        q1Feedback.style.display = 'inline-block';
       }
+      syncCookingDetails();
     });
+  }
+
+  // 問題 2 互動 (料理時加入了多少醬油 需求7)
+  const q2Buttons = document.querySelectorAll('.q2-opt');
+  const q2Feedback = document.getElementById('q2-feedback');
+  q2Buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      q2Buttons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      soySauceAmount = btn.getAttribute('data-val');
+      if (q2Feedback) {
+        q2Feedback.textContent = `已確認：${soySauceAmount}`;
+        q2Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
+    });
+  });
+
+  const btnQ2Voice = document.getElementById('btn-q2-voice');
+  if (btnQ2Voice) {
+    btnQ2Voice.addEventListener('click', () => {
+      soySauceAmount = '少許／一茶匙';
+      q2Buttons.forEach(b => b.classList.remove('selected'));
+      if (q2Buttons[0]) q2Buttons[0].classList.add('selected');
+      if (q2Feedback) {
+        q2Feedback.textContent = '語音輸入已確認：少許／一茶匙';
+        q2Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
+    });
+  }
+
+  const btnQ2Skip = document.getElementById('btn-q2-skip');
+  if (btnQ2Skip) {
+    btnQ2Skip.addEventListener('click', () => {
+      soySauceAmount = '用量未知';
+      q2Buttons.forEach(b => b.classList.remove('selected'));
+      if (q2Feedback) {
+        q2Feedback.textContent = '已略過';
+        q2Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
+    });
+  }
+
+  // 問題 3 互動 (料理時加入了多少油 需求7)
+  const q3Buttons = document.querySelectorAll('.q3-opt');
+  const q3Feedback = document.getElementById('q3-feedback');
+  q3Buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      q3Buttons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      oilAmount = btn.getAttribute('data-val');
+      if (q3Feedback) {
+        q3Feedback.textContent = `已確認：${oilAmount}`;
+        q3Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
+    });
+  });
+
+  const btnQ3Voice = document.getElementById('btn-q3-voice');
+  if (btnQ3Voice) {
+    btnQ3Voice.addEventListener('click', () => {
+      oilAmount = '少許水煮油';
+      q3Buttons.forEach(b => b.classList.remove('selected'));
+      if (q3Buttons[0]) q3Buttons[0].classList.add('selected');
+      if (q3Feedback) {
+        q3Feedback.textContent = '語音輸入已確認：少許水煮油';
+        q3Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
+    });
+  }
+
+  const btnQ3Skip = document.getElementById('btn-q3-skip');
+  if (btnQ3Skip) {
+    btnQ3Skip.addEventListener('click', () => {
+      oilAmount = '用量未知';
+      q3Buttons.forEach(b => b.classList.remove('selected'));
+      if (q3Feedback) {
+        q3Feedback.textContent = '已略過';
+        q3Feedback.style.display = 'inline-block';
+      }
+      syncCookingDetails();
+    });
+  }
+
+  function syncCookingDetails() {
+    const expCookingText = document.getElementById('explanation-cooking-text');
+    if (expCookingText) {
+      expCookingText.textContent = `已補充：${cookingMethod}、醬油：${soySauceAmount}、用油：${oilAmount}`;
+    }
+
+    const basisCondDisplay = document.getElementById('basis-cond-display');
+    if (basisCondDisplay) {
+      basisCondDisplay.textContent = `${cookingMethod}、醬油：${soySauceAmount}、用油：${oilAmount}`;
+    }
+
+    const shareSeasoningInfo = document.getElementById('share-seasoning-info');
+    if (shareSeasoningInfo) {
+      shareSeasoningInfo.textContent = `烹調方式：${cookingMethod}、${soySauceAmount}`;
+    }
+
+    const diaryDetailMethod = document.getElementById('diary-detail-method');
+    if (diaryDetailMethod) {
+      diaryDetailMethod.textContent = `烹調方式：${cookingMethod}`;
+    }
   }
 
   const btnClarifyConfirm = document.getElementById('btn-clarify-confirm');
   if (btnClarifyConfirm) {
     btnClarifyConfirm.addEventListener('click', () => {
+      syncPortionToAllScreens();
+      syncCookingDetails();
       navigateTo('screen-explanation');
     });
   }
 
-  // 6. 來源與說明畫面 (Explanation) 互動
+  // 6. 來源與說明 (需求8：模擬估算數據展示開關)
   const btnToggleBasis = document.getElementById('btn-toggle-basis');
   const basisDetailBox = document.getElementById('basis-detail-box');
   if (btnToggleBasis && basisDetailBox) {
@@ -333,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. 紀錄處理畫面 (Action) 互動
+  // 7. 紀錄處理
   const btnActionSavePrivate = document.getElementById('btn-action-save-private');
   if (btnActionSavePrivate) {
     btnActionSavePrivate.addEventListener('click', () => {
@@ -355,21 +540,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 8. 分享預覽畫面 (Share) 互動
-  const shareRecipients = ['接收者：家人 A', '接收者：家人 B', '接收者：家人 C'];
-  let recipientIndex = 0;
-  const shareRecipientTitle = document.querySelector('#screen-share .card-title');
-  const btnChangeRecipient = document.querySelector('#screen-share button[style*="font-size: 17px"]');
-  if (btnChangeRecipient && shareRecipientTitle) {
-    btnChangeRecipient.addEventListener('click', () => {
-      recipientIndex = (recipientIndex + 1) % shareRecipients.length;
-      shareRecipientTitle.textContent = shareRecipients[recipientIndex];
+  // 8. 分享預覽 (需求9：選擇分享對象彈窗與多選)
+  const btnOpenRecipientModal = document.getElementById('btn-open-recipient-modal');
+  const btnConfirmRecipients = document.getElementById('btn-confirm-recipients');
+  const btnCancelRecipients = document.getElementById('btn-cancel-recipients');
+  const shareRecipientTitle = document.getElementById('share-recipient-title');
+
+  if (btnOpenRecipientModal && modalRecipients) {
+    btnOpenRecipientModal.addEventListener('click', () => {
+      modalRecipients.classList.add('active');
+    });
+  }
+
+  if (btnCancelRecipients && modalRecipients) {
+    btnCancelRecipients.addEventListener('click', () => {
+      modalRecipients.classList.remove('active');
+    });
+  }
+
+  if (btnConfirmRecipients && modalRecipients) {
+    btnConfirmRecipients.addEventListener('click', () => {
+      const checkedBoxes = modalRecipients.querySelectorAll('input[type="checkbox"]:checked');
+      selectedRecipients = Array.from(checkedBoxes).map(cb => cb.value);
+      if (selectedRecipients.length === 0) selectedRecipients = ['家人 A'];
+      if (shareRecipientTitle) {
+        shareRecipientTitle.textContent = `接收者：${selectedRecipients.join('、')}`;
+      }
+      modalRecipients.classList.remove('active');
     });
   }
 
   const btnShareConfirm = document.getElementById('btn-share-confirm');
   if (btnShareConfirm) {
     btnShareConfirm.addEventListener('click', () => {
+      // 預設進入所選的第一個對象聊天室
+      activeContact = selectedRecipients[0] || '家人A';
       navigateTo('screen-chat-detail');
     });
   }
@@ -388,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 9. 餐食日記詳細資料按鈕互動 (需求8)
+  // 9. 餐食日記詳細資料按鈕
   const detailDateTitle = document.getElementById('detail-date-title');
   const diaryDetailButtons = document.querySelectorAll('.btn-view-diary-detail');
   diaryDetailButtons.forEach(btn => {
@@ -397,6 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (detailDateTitle) {
         detailDateTitle.textContent = `${dateStr} 詳細資料`;
       }
+      syncPortionToAllScreens();
       navigateTo('screen-diary-detail');
     });
   });
@@ -408,38 +614,220 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 10. 聊天室聯絡人清單 (Chat List)
+  // 10. 聊天室聯絡人清單 (需求10：名稱一致對應)
   const contactItems = document.querySelectorAll('.contact-list-item');
   contactItems.forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('click', (e) => {
+      const targetContact = e.currentTarget.getAttribute('data-contact') || '家人A';
+      activeContact = targetContact;
       navigateTo('screen-chat-detail');
     });
   });
 
-  // 11. 聊天室對話與回覆互動 (Chat Detail)
-  // 使用者可於聊天頁面查看其他用戶傳來的餐食照片與資訊，可以「直接回覆」或「請ai協助潤飾語氣」
-  const chatInput = document.getElementById('chat-input-text');
+  // 11. 聊天室頁面動態渲染 (需求5、10、11)
+  const chatMessagesContainer = document.getElementById('chat-messages-container');
+  const chatPerspectiveBadge = document.getElementById('chat-perspective-badge');
+  const familyInputControls = document.getElementById('family-input-controls');
+  const elderInputControls = document.getElementById('elder-input-controls');
+  const aiInputControls = document.getElementById('ai-input-controls');
+  const chatInputText = document.getElementById('chat-input-text');
+  const chatElderInputText = document.getElementById('chat-elder-input-text');
+  const chatAiInputText = document.getElementById('chat-ai-input-text');
+
+  function renderChatDetailView() {
+    if (!chatMessagesContainer) return;
+
+    // 清空現有訊息重新依視角渲染
+    chatMessagesContainer.innerHTML = '';
+
+    // 更新頂欄標題 (需求10)
+    if (headerTitle) {
+      headerTitle.textContent = activeContact;
+    }
+
+    // 判斷是否為 AI助手 (需求11)
+    if (activeContact === 'AI助手') {
+      if (chatPerspectiveBadge) {
+        chatPerspectiveBadge.textContent = '長者端｜AI 健康飲食助手';
+      }
+
+      // 隱藏家人與長者一般輸入，顯示 AI 提問輸入
+      if (familyInputControls) familyInputControls.style.display = 'none';
+      if (elderInputControls) elderInputControls.style.display = 'none';
+      if (aiInputControls) aiInputControls.style.display = 'block';
+
+      // 使用者發出的餐食照片氣泡
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble bubble-sent';
+      userBubble.innerHTML = `
+        <div class="chat-bubble-sender">我（林陳桂華）</div>
+        <div class="card-text" style="font-weight: 800;">分享內容：餐食照片與文字</div>
+        <div class="food-photo-card" style="margin: 8px 0;">
+          <img src="meal.jpg" alt="真實餐食照片" style="height: 170px;">
+        </div>
+        <div class="card-text" style="font-weight: 800;">已確認：豆腐、青菜、${chosenPortion}</div>
+        <div class="card-text" style="font-size: 15px; color: #4B5563;">烹調方式：${cookingMethod}</div>
+      `;
+      chatMessagesContainer.appendChild(userBubble);
+
+      // AI助手給予的禮貌、正確、有資料來源之回覆 (需求11)
+      const aiReplyBubble = document.createElement('div');
+      aiReplyBubble.className = 'chat-bubble bubble-received';
+      aiReplyBubble.innerHTML = `
+        <div class="chat-bubble-sender" style="color: #047857; font-weight: 900;">AI助手</div>
+        <div class="card-text" style="line-height: 1.6;">
+          桂華女士您好！為您查詢今日餐食紀錄：<br><br>
+          您今天記錄的【豆腐、青菜、${chosenPortion}】整體搭配相當健康美味！<br>
+          • <strong>豆腐：</strong>提供豐富優質大豆植物蛋白與鈣質，質地軟嫩好吞嚥，很適合長輩日常補充體力。<br>
+          • <strong>青菜：</strong>空心菜富含膳食纖維與微量元素，有助促進腸胃蠕動。<br>
+          • <strong>溫馨提醒：</strong>注意到您採用${cookingMethod}料理。若有搭配醬油（${soySauceAmount}），建議沾食或另行分裝，既能保留美味又能適度調控鹽分攝取喔！<br><br>
+          <span style="font-size: 14px; color: #4B5563;">【資料來源：衛生福利部國民健康署「高齡營養健康指引 三好一巧原則」與台灣食品營養成分資料庫】</span>
+        </div>
+      `;
+      chatMessagesContainer.appendChild(aiReplyBubble);
+
+    } else {
+      // 聯絡人為一般家人 (家人A, 家人B, 家人C)
+      const replyText = familyReplies[activeContact] || '不要再淋醬了';
+
+      if (currentRole === 'elder') {
+        // 長者端視角 (需求5)
+        if (chatPerspectiveBadge) {
+          chatPerspectiveBadge.textContent = `長者端視角｜林陳桂華 女士 （與${activeContact}對話中）`;
+        }
+
+        if (familyInputControls) familyInputControls.style.display = 'none';
+        if (elderInputControls) elderInputControls.style.display = 'block';
+        if (aiInputControls) aiInputControls.style.display = 'none';
+
+        // 右側：我(長者)發出的餐食照片與資訊
+        const sentBubble = document.createElement('div');
+        sentBubble.className = 'chat-bubble bubble-sent';
+        sentBubble.innerHTML = `
+          <div class="chat-bubble-sender">我（林陳桂華）</div>
+          <div class="card-text" style="font-weight: 800;">分享內容：餐食照片與文字</div>
+          <div class="food-photo-card" style="margin: 8px 0;">
+            <img src="meal.jpg" alt="真實餐食照片" style="height: 170px;">
+          </div>
+          <div class="card-text" style="font-weight: 800;">已確認：豆腐、青菜、${chosenPortion}</div>
+          <div class="card-text" style="font-size: 15px; color: #4B5563;">烹調方式：${cookingMethod}</div>
+        `;
+        chatMessagesContainer.appendChild(sentBubble);
+
+        // 左側：家人傳來的關懷回覆
+        const receivedBubble = document.createElement('div');
+        receivedBubble.className = 'chat-bubble bubble-received';
+        receivedBubble.innerHTML = `
+          <div class="chat-bubble-sender">${activeContact}</div>
+          <div class="card-text">${replyText}</div>
+        `;
+        chatMessagesContainer.appendChild(receivedBubble);
+
+      } else {
+        // 家屬端視角 (需求5)
+        if (chatPerspectiveBadge) {
+          chatPerspectiveBadge.textContent = `家屬端視角｜林正義 先生 （${activeContact}）`;
+        }
+
+        if (familyInputControls) familyInputControls.style.display = 'block';
+        if (elderInputControls) elderInputControls.style.display = 'none';
+        if (aiInputControls) aiInputControls.style.display = 'none';
+
+        // 左側：長者傳來的餐食照片與資訊
+        const elderBubble = document.createElement('div');
+        elderBubble.className = 'chat-bubble bubble-received';
+        elderBubble.innerHTML = `
+          <div class="chat-bubble-sender">長者（林陳桂華 女士）</div>
+          <div class="card-text" style="font-weight: 800;">分享內容：餐食照片與文字</div>
+          <div class="food-photo-card" style="margin: 8px 0;">
+            <img src="meal.jpg" alt="真實餐食照片" style="height: 170px;">
+          </div>
+          <div class="card-text" style="font-weight: 800;">已確認：豆腐、青菜、${chosenPortion}</div>
+          <div class="card-text" style="font-size: 15px; color: #4B5563;">烹調方式：${cookingMethod}</div>
+        `;
+        chatMessagesContainer.appendChild(elderBubble);
+
+        // 右側：家屬已回覆之訊息 (若有)
+        const familySentBubble = document.createElement('div');
+        familySentBubble.className = 'chat-bubble bubble-sent';
+        familySentBubble.innerHTML = `
+          <div class="chat-bubble-sender">我（${activeContact}）</div>
+          <div class="card-text">${replyText}</div>
+        `;
+        chatMessagesContainer.appendChild(familySentBubble);
+      }
+    }
+
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+  }
+
+  // 家人端回覆操作 (直接回覆與請ai協助潤飾語氣)
   const btnDirectReply = document.getElementById('btn-direct-reply');
   const btnAiRefine = document.getElementById('btn-ai-refine');
-  const chatMessagesContainer = document.getElementById('chat-messages-container');
 
   if (btnDirectReply) {
     btnDirectReply.addEventListener('click', () => {
-      const messageText = chatInput.value.trim() || '不要再淋醬了';
-      appendChatMessage(messageText, 'sent');
-      chatInput.value = '';
+      const text = chatInputText.value.trim() || '不要再淋醬了';
+      familyReplies[activeContact] = text;
+      renderChatDetailView();
+      chatInputText.value = '';
     });
   }
 
   if (btnAiRefine) {
     btnAiRefine.addEventListener('click', () => {
-      if (modalAiRefine) {
-        modalAiRefine.classList.add('active');
-      }
+      if (modalAiRefine) modalAiRefine.classList.add('active');
     });
   }
 
-  // AI 潤飾語氣彈窗內選項與按鈕
+  // 長者端直接發送回覆
+  const btnElderSendReply = document.getElementById('btn-elder-send-reply');
+  const btnElderVoiceReply = document.getElementById('btn-elder-voice-reply');
+  if (btnElderSendReply) {
+    btnElderSendReply.addEventListener('click', () => {
+      const text = chatElderInputText.value.trim();
+      if (!text) return;
+      const b = document.createElement('div');
+      b.className = 'chat-bubble bubble-sent';
+      b.innerHTML = `<div class="chat-bubble-sender">我（林陳桂華）</div><div class="card-text">${text}</div>`;
+      chatMessagesContainer.appendChild(b);
+      chatElderInputText.value = '';
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    });
+  }
+
+  if (btnElderVoiceReply) {
+    btnElderVoiceReply.addEventListener('click', () => {
+      chatElderInputText.value = '今天多吃了一點空心菜，精神很好！';
+    });
+  }
+
+  // AI 助手提問送出 (需求11)
+  const btnAiAskReply = document.getElementById('btn-ai-ask-reply');
+  if (btnAiAskReply) {
+    btnAiAskReply.addEventListener('click', () => {
+      const text = chatAiInputText.value.trim() || '豆腐跟青菜可以天天吃嗎？';
+      const userQ = document.createElement('div');
+      userQ.className = 'chat-bubble bubble-sent';
+      userQ.innerHTML = `<div class="chat-bubble-sender">我（林陳桂華）</div><div class="card-text">${text}</div>`;
+      chatMessagesContainer.appendChild(userQ);
+
+      const aiAns = document.createElement('div');
+      aiAns.className = 'chat-bubble bubble-received';
+      aiAns.innerHTML = `
+        <div class="chat-bubble-sender" style="color: #047857; font-weight: 900;">AI助手</div>
+        <div class="card-text">
+          桂華女士，豆腐與青菜是非常理想的長者日常食物！天天吃是很好的，只要維持烹調少油少鹽，再搭配不同顏色的蔬菜（如南瓜、胡蘿蔔），營養會更加均衡喔！<br>
+          <span style="font-size: 14px; color: #4B5563;">【資料來源：國民健康署『我的餐盤』飲食原則】</span>
+        </div>
+      `;
+      chatMessagesContainer.appendChild(aiAns);
+      chatAiInputText.value = '';
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    });
+  }
+
+  // AI 潤飾語氣彈窗內操作
   const btnSelectDraft = document.getElementById('btn-select-draft');
   const btnSelectOriginal = document.getElementById('btn-select-original');
   const btnModalConfirmSend = document.getElementById('btn-modal-confirm-send');
@@ -452,7 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentChosenText = '這餐要不要試試少加一點醬？';
       if (compareDraftElem) compareDraftElem.style.border = '2px solid #059669';
       if (compareOrigElem) compareOrigElem.style.border = 'none';
-      if (chatInput) chatInput.value = currentChosenText;
+      if (chatInputText) chatInputText.value = currentChosenText;
     });
   }
 
@@ -461,37 +849,26 @@ document.addEventListener('DOMContentLoaded', () => {
       currentChosenText = '不要再淋醬了';
       if (compareOrigElem) compareOrigElem.style.border = '2px solid #DC2626';
       if (compareDraftElem) compareDraftElem.style.border = 'none';
-      if (chatInput) chatInput.value = currentChosenText;
+      if (chatInputText) chatInputText.value = currentChosenText;
     });
   }
 
   if (btnModalConfirmSend) {
     btnModalConfirmSend.addEventListener('click', () => {
-      appendChatMessage(currentChosenText, 'sent');
-      if (modalAiRefine) {
-        modalAiRefine.classList.remove('active');
-      }
-      if (chatInput) chatInput.value = '';
+      familyReplies[activeContact] = currentChosenText;
+      renderChatDetailView();
+      if (modalAiRefine) modalAiRefine.classList.remove('active');
+      if (chatInputText) chatInputText.value = '';
     });
   }
 
   if (btnModalCancel) {
     btnModalCancel.addEventListener('click', () => {
-      if (modalAiRefine) {
-        modalAiRefine.classList.remove('active');
-      }
+      if (modalAiRefine) modalAiRefine.classList.remove('active');
     });
   }
 
-  function appendChatMessage(text, type) {
-    if (!chatMessagesContainer) return;
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble bubble-${type}`;
-    bubble.textContent = text;
-    chatMessagesContainer.appendChild(bubble);
-    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-  }
-
-  // 初始化畫面為登入畫面
+  // 初始化畫面
+  updatePortionState(0);
   navigateTo('screen-login', false);
 });
