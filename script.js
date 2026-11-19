@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let historyStack = [];
   let currentRole = 'elder'; // 'elder' | 'family'
   let activeContact = '家人A';
-  let currentChosenText = '這餐要不要試試少加一點醬？';
+  let currentChosenText = '';
+  let currentAiDraftText = ''; // AI 草稿（隨打開的聯絡人動態更新）
 
   // 份量與調味聯動狀態
   let chosenPortion = '半碗飯';
@@ -51,12 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedRecipients = ['家人A'];
   let sharedMealContacts = new Set(['家人A']);
 
-  // 家人個別回覆紀錄狀態庫
+  // 家人個別回覆紀錄狀態庫（原始語氣，未經 AI 潤飾）
   let familyReplies = {
-    '家人A': '這餐要不要試試少加一點醬？',
-    '家人B': '媽，今天吃得好清淡健康！',
-    '家人C': '阿嬤，記得湯不要喝太鹹喔！'
+    '家人A': '不要再淋醬了',
+    '家人B': '媽，今天吃了啥？',
+    '家人C': '阿嬤湯太鹹別喝'
   };
+  // AI 精練後的回覆（每位家人，確認送出後才寫入）
+  let refinedReplies = {};
 
   // 判斷資訊是否充足之邏輯 (問題 1 核心判定)
   // 依國健署衛教原則：若調味品用量為「未知／略過」，無法精確估算鈉含量，保留未知
@@ -1041,7 +1044,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else {
       // 聯絡人為一般家人 (家人A, 家人B, 家人C)
-      const replyText = familyReplies[currentContactNorm] || '媽，今天吃得好清淡健康！';
+      // Bug 1 fix: 優先顯示 AI 潤飾後的回覆，若無則顯示原始回覆
+      const replyText = refinedReplies[currentContactNorm] || familyReplies[currentContactNorm] || '媽，今天吃得好清淡健康！';
 
       if (currentRole === 'elder') {
         // 長者端視角
@@ -1156,6 +1160,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnAiRefine) {
     btnAiRefine.addEventListener('click', () => {
+      // Bug 2 fix: load the current contact's original reply into the modal
+      const contactKey = normContact(activeContact);
+      const origText = familyReplies[contactKey] || '';
+
+      // Generate a simple AI-refined version for this contact
+      const aiDraftMap = {
+        '家人A': '這餐要不要試試少加一點醬？',
+        '家人B': '媽，今天吃得好清淡健康！希望您每天都吃得這麼均衡喔！',
+        '家人C': '阿嬤，記得湯不要喝太鹹喔！您健康我們才放心！'
+      };
+      const draftText = aiDraftMap[contactKey] || origText;
+
+      // Update modal content to show correct contact's text
+      if (compareOrigElem) compareOrigElem.textContent = `原文：${origText}`;
+      if (compareDraftElem) compareDraftElem.textContent = `草稿：${draftText}`;
+
+      // Reset border highlight
+      if (compareDraftElem) compareDraftElem.style.border = '2px solid #059669';
+      if (compareOrigElem) compareOrigElem.style.border = 'none';
+
+      // Pre-select draft
+      currentAiDraftText = draftText;
+      currentChosenText = draftText;
+      if (chatInputText) chatInputText.value = currentChosenText;
+
       if (modalAiRefine) modalAiRefine.classList.add('active');
     });
   }
@@ -1214,7 +1243,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnSelectDraft) {
     btnSelectDraft.addEventListener('click', () => {
-      currentChosenText = '這餐要不要試試少加一點醬？';
+      // 切換到 AI 草稿版本
+      currentChosenText = currentAiDraftText;
       if (compareDraftElem) compareDraftElem.style.border = '2px solid #059669';
       if (compareOrigElem) compareOrigElem.style.border = 'none';
       if (chatInputText) chatInputText.value = currentChosenText;
@@ -1223,7 +1253,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnSelectOriginal) {
     btnSelectOriginal.addEventListener('click', () => {
-      currentChosenText = '不要再淋醬了';
+      // Revert to the current contact's original reply text
+      const contactKey = normContact(activeContact);
+      currentChosenText = familyReplies[contactKey] || '';
       if (compareOrigElem) compareOrigElem.style.border = '2px solid #DC2626';
       if (compareDraftElem) compareDraftElem.style.border = 'none';
       if (chatInputText) chatInputText.value = currentChosenText;
@@ -1232,7 +1264,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnModalConfirmSend) {
     btnModalConfirmSend.addEventListener('click', () => {
-      familyReplies[normContact(activeContact)] = currentChosenText;
+      // 儲存 AI 潤飾回覆至 refinedReplies，不覆蓋原始回覆
+      refinedReplies[normContact(activeContact)] = currentChosenText;
       renderChatDetailView();
       if (modalAiRefine) modalAiRefine.classList.remove('active');
       if (chatInputText) chatInputText.value = '';
