@@ -26,7 +26,7 @@
       <span>5G ●●● 100%</span>
     </div>
 
-    <!-- 導覽頂欄 (初始畫面不重複出現「呷好食光」) -->
+    <!-- 導覽頂欄 -->
     <header class="app-header" id="main-app-header" style="display: none;">
       <button type="button" class="header-back-btn" id="header-back-btn">&lt; 返回上一頁</button>
       <div class="header-title" id="header-title">呷好食光</div>
@@ -167,7 +167,7 @@
       </div>
     </section>
 
-    <!-- 6. 提問與確認頁面 (需求 1 & 5：單步逐步跳出 + 高對比長者友善選項卡片) -->
+    <!-- 6. 提問與確認頁面 -->
     <section class="app-screen" id="screen-clarify">
       <div class="card-box mb-14">
         <div class="card-title">菜色與份量確認</div>
@@ -181,7 +181,7 @@
         <div class="card-badge" id="portion-status-badge">已選擇：半碗飯</div>
       </div>
 
-      <!-- 連續確認問題 1：豆腐烹調方式 (初始可見) -->
+      <!-- 問題 1：豆腐烹調方式 -->
       <div class="clarify-step-box" id="clarify-q1-box">
         <div class="clarify-step-header">
           <span class="step-num-badge">1</span>
@@ -210,7 +210,7 @@
         <div class="card-badge" id="q1-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：蒸的</div>
       </div>
 
-      <!-- 連續確認問題 2：醬油用量 (需求 1：回答完問題 1 後才跳出) -->
+      <!-- 問題 2：醬油用量 -->
       <div class="clarify-step-box" id="clarify-q2-box" style="display: none;">
         <div class="clarify-step-header">
           <span class="step-num-badge">2</span>
@@ -253,7 +253,7 @@
         <div class="card-badge" id="q2-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：少許／一茶匙</div>
       </div>
 
-      <!-- 連續確認問題 3：用油量 (需求 1：回答完問題 2 後才跳出) -->
+      <!-- 問題 3：用油量 -->
       <div class="clarify-step-box" id="clarify-q3-box" style="display: none;">
         <div class="clarify-step-header">
           <span class="step-num-badge">3</span>
@@ -299,13 +299,37 @@
       <button type="button" class="btn-large btn-accent" id="btn-clarify-confirm">確認菜色與份量</button>
     </section>
 
-    <!-- 7. 來源與說明 -->
+    <!-- 7. 來源與說明 (需求 1 & 2：優化自主決定提醒、放大資料庫並提供推估值) -->
     <section class="app-screen" id="screen-explanation">
       <div class="card-box mb-14">
         <div class="card-title">來源與說明</div>
+        <div class="subtle-caption">系統依確認資訊查詢資料</div>
+        
+        <!-- 放大選用的資料庫 (需求 2) -->
+        <div class="database-highlight-box">
+          <div class="subtle-caption">引用國家資料庫項目</div>
+          <div class="database-title-large">衛生福利部國民健康署「台灣常用食品營養成分資料庫」</div>
+        </div>
+
         <div class="card-text" id="explanation-confirmed-text" style="font-size: 20px; font-weight: 800; color: #047857;">已確認：豆腐、半碗飯</div>
         <div class="card-text" id="explanation-cooking-text">已補充：蒸的、少許醬油、少許水煮油</div>
-        <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法精確估算鈉含量</div>
+        
+        <!-- 依足夠資訊推估之營養與鈉含量範圍 (需求 2) -->
+        <div class="card-badge badge-success" id="explanation-calc-badge">資訊已足夠：已為您推估營養素與鈉含量範圍</div>
+        <div class="nutrition-est-grid" id="explanation-nutrition-grid">
+          <div class="nutrition-item">
+            <div class="nutrition-val" id="exp-nutri-cal">245 大卡</div>
+            <div class="nutrition-lbl">推估總熱量</div>
+          </div>
+          <div class="nutrition-item">
+            <div class="nutrition-val" id="exp-nutri-protein">10.5 g</div>
+            <div class="nutrition-lbl">大豆優質蛋白</div>
+          </div>
+          <div class="nutrition-item">
+            <div class="nutrition-val" id="exp-nutri-sodium">350~450 mg</div>
+            <div class="nutrition-lbl">推估鈉含量</div>
+          </div>
+        </div>
       </div>
 
       <div class="card-box mb-14">
@@ -314,7 +338,6 @@
           <h4>依據餐食照片與確認資訊之估算說明：</h4>
           <ul>
             <li><strong>照片辨識食物品項：</strong>傳統板豆腐（約100g）、炒空心菜（約100g）、白米飯（<span id="basis-portion-display">半碗飯</span>）。</li>
-            <li><strong>資料來源：</strong>衛生福利部國民健康署「台灣常用食品營養成分資料庫」及高齡衛教指引。</li>
             <li><strong>熱量與主要營養推估：</strong>
               <ul>
                 <li>白米飯（<span id="basis-cal-portion">半碗飯</span>）：約提供 <span id="basis-calories">140</span> 大卡熱量與碳水化合物。</li>
@@ -322,17 +345,21 @@
                 <li>空心菜：提供豐富膳食纖維（約 2.1 克）與鉀離子，有益腸道機能。</li>
               </ul>
             </li>
-            <li><strong>調味與估算假設限制：</strong>
-              <p>由於醬油滲透量與炒菜用油無法僅憑平面影像測量，系統依您補充之條件（<span id="basis-cond-display">蒸的、少許醬油、少許水煮油</span>）進行推估。依衛教原則，不憑外觀斷定「吃太鹹」，保留未知以維護評估客觀性。</p>
+            <li><strong>調味與鈉含量計算依據：</strong>
+              <p>依據您補充之調味條件（<span id="basis-cond-display">蒸的、少許醬油、少許水煮油</span>），推估每餐鈉含量約為 <span id="basis-sodium-range">350～450 毫克</span>（國健署建議每日鈉攝取上限 2400 毫克，本餐約佔 16%，屬清淡適中）。系統不憑外觀斷定「吃太鹹」，呈現推估依據供您參考。</p>
             </li>
           </ul>
         </div>
       </div>
 
+      <!-- 需求 1：改為溫和提醒卡片，稱呼長者為「您」，非點擊按鈕 -->
       <div class="card-box mb-18">
         <div class="card-title">一般資訊與建議</div>
-        <div class="card-text">可詢問醬料是否能另放</div>
-        <div class="card-badge" style="background-color: #F3F4F6; color: #4B5563; border-color: #D1D5DB;">是否採用由你決定</div>
+        <div class="card-text">可詢問醬料是否能另放，兼顧美味與健康</div>
+        <div class="elder-autonomy-note">
+          <span class="note-icon">🌿</span>
+          <span>生活小提醒：以上為一般衛教飲食建議，是否採用由您自主決定。</span>
+        </div>
       </div>
 
       <button type="button" class="btn-large btn-accent" id="btn-explanation-next">下一步</button>
@@ -376,11 +403,11 @@
       </div>
     </section>
 
-    <!-- 10. 餐食日記畫面 (需求 2 & 3：刪除 11/4，更新 11/9 與 11/5 的照片與菜名) -->
+    <!-- 10. 餐食日記畫面 -->
     <section class="app-screen" id="screen-diary">
       <div class="card-title mb-14">餐食日記</div>
 
-      <!-- 11/10 紀錄 (維持不變) -->
+      <!-- 11/10 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/10</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -390,7 +417,7 @@
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/10">詳細資料</button>
       </div>
 
-      <!-- 11/9 紀錄 (替換為白飯、滷肉、蛋、青菜) -->
+      <!-- 11/9 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/9</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -400,7 +427,7 @@
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/9">詳細資料</button>
       </div>
 
-      <!-- 11/5 紀錄 (替換為白飯、魚肉、青菜) -->
+      <!-- 11/5 紀錄 -->
       <div class="timeline-item">
         <div class="timeline-date">11/5</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
@@ -411,7 +438,7 @@
       </div>
     </section>
 
-    <!-- 10-B. 餐食日記詳細資料畫面 (動態依點擊日期呈現對應資訊) -->
+    <!-- 10-B. 餐食日記詳細資料畫面 (需求 2：放大資料庫與展現估算數據) -->
     <section class="app-screen" id="screen-diary-detail">
       <div class="card-title mb-14" id="detail-date-title">11/10 詳細資料</div>
 
@@ -429,16 +456,44 @@
 
       <div class="card-box mb-14">
         <div class="card-title">來源與說明</div>
-        <div class="card-text">系統依確認資訊查詢資料</div>
-        <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法精確估算鈉含量</div>
-        <div class="card-text" id="diary-detail-basis" style="font-size: 15px; color: #4B5563;">
-          選用台灣常用食品營養成分資料庫項目；未知油量、醬汁保留未知。
+        <div class="subtle-caption">系統依確認資訊查詢資料</div>
+
+        <!-- 放大資料庫 (需求 2) -->
+        <div class="database-highlight-box">
+          <div class="subtle-caption">引用國家資料庫項目</div>
+          <div class="database-title-large">衛生福利部國民健康署「台灣常用食品營養成分資料庫」</div>
+        </div>
+
+        <div class="card-badge badge-success" id="diary-detail-calc-badge">已依記錄完成營養推估</div>
+        
+        <!-- 動態營養與鈉含量推估數據網格 (需求 2) -->
+        <div class="nutrition-est-grid" id="diary-detail-nutrition-grid">
+          <div class="nutrition-item">
+            <div class="nutrition-val" id="diary-nutri-cal">245 大卡</div>
+            <div class="nutrition-lbl">推估熱量</div>
+          </div>
+          <div class="nutrition-item">
+            <div class="nutrition-val" id="diary-nutri-protein">10.5 g</div>
+            <div class="nutrition-lbl">優質蛋白</div>
+          </div>
+          <div class="nutrition-item">
+            <div class="nutrition-val" id="diary-nutri-sodium">350~450 mg</div>
+            <div class="nutrition-lbl">推估鈉含量</div>
+          </div>
+        </div>
+
+        <div class="card-text" id="diary-detail-basis" style="font-size: 14px; color: #4B5563; margin-top: 8px;">
+          選用台灣常用食品營養成分資料庫項目（白飯、傳統板豆腐、空心菜）；調味依記錄推估。
         </div>
       </div>
 
       <div class="card-box mb-18">
         <div class="card-title">一般資訊與建議</div>
-        <div class="card-text" id="diary-detail-suggestion">可詢問醬料是否能另放；是否採用由你決定</div>
+        <div class="card-text" id="diary-detail-suggestion">可詢問醬料是否能另放</div>
+        <div class="elder-autonomy-note">
+          <span class="note-icon">🌿</span>
+          <span>生活小提醒：以上為一般衛教飲食建議，是否採用由您自主決定。</span>
+        </div>
       </div>
 
       <button type="button" class="btn-large btn-primary" id="btn-back-to-diary">&lt; 返回餐食日記</button>
@@ -471,7 +526,7 @@
       </div>
     </section>
 
-    <!-- 12. 聊天頁面 -->
+    <!-- 12. 聊天頁面 (需求 3：未勾選對象聯動呈現未分享狀態) -->
     <section class="app-screen" id="screen-chat-detail">
       <div class="card-badge" id="chat-perspective-badge">長者端視角｜林陳桂華 女士</div>
 
