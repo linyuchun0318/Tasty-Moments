@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>呷好食光 - 高齡者日常餐食辨識與家庭飲食支持系統</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,12 +12,12 @@
   <div class="top-role-bar">
     <div class="role-bar-title">高齡者日常餐食辨識與家庭飲食支持系統</div>
     <div class="role-switch-group">
-      <button type="button" class="role-btn active" id="role-elder-btn">主要 Persona (長者端) 林陳桂華 女士</button>
-      <button type="button" class="role-btn" id="role-family-btn">次要 Persona (家屬端) 林正義 先生</button>
+      <button type="button" class="role-btn active" id="role-elder-btn">主要 Persona (長者端)<br>林陳桂華 女士</button>
+      <button type="button" class="role-btn" id="role-family-btn">次要 Persona (家屬端)<br>林正義 先生</button>
     </div>
   </div>
 
-  <!-- 手機外框容器 (寬度 520px) -->
+  <!-- 手機外框容器 (RWD: width 100%; max-width 480px) -->
   <div class="phone-container">
     
     <!-- 手機狀態列 -->
@@ -33,9 +33,8 @@
       <div class="header-placeholder"></div>
     </header>
 
-    <!-- 1. 登入帳號畫面 (使用附檔真實 Logo) -->
+    <!-- 1. 登入帳號畫面 -->
     <section class="app-screen active" id="screen-login">
-      <!-- 品牌標誌與文字橫排對齊 -->
       <div class="auth-hero-row">
         <div class="auth-logo-box">
           <img src="logo_app.png" alt="呷好食光" class="auth-logo-img">
@@ -46,10 +45,8 @@
         </div>
       </div>
 
-      <!-- 登入帳號標籤 -->
       <div class="auth-section-label">登入帳號</div>
 
-      <!-- 三大登入選項（替換為使用者提供之官方圖案附檔） -->
       <div class="list-group mb-14">
         <!-- Google 登入 -->
         <button type="button" class="btn-auth-item btn-auth-google btn-login-action">
@@ -76,7 +73,6 @@
         </button>
       </div>
 
-      <!-- 分隔線與註冊提示 -->
       <hr class="auth-divider">
 
       <div class="auth-prompt-text">第一次使用嗎? 請先點擊下方註冊帳號</div>
@@ -138,7 +134,7 @@
           <div class="viewfinder-corner corner-tr"></div>
           <div class="viewfinder-corner corner-bl"></div>
           <div class="viewfinder-corner corner-br"></div>
-          <svg width="140" height="140" viewBox="0 0 120 120" fill="none">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
             <circle cx="60" cy="60" r="50" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6 6"/>
             <ellipse cx="60" cy="60" rx="36" ry="20" fill="#22C55E" opacity="0.35"/>
           </svg>
@@ -157,10 +153,9 @@
         <div class="card-badge">尚未經您確認</div>
         <div class="card-title">您吃的是這些嗎?</div>
         <div class="card-text" id="candidate-dishes-text" style="font-size: 24px; font-weight: 900; color: #047857;">滷肉、青菜、白飯</div>
-        <div class="card-badge" id="candidate-voice-feedback" style="display: none; background-color: #E0E7FF; color: #3730A3; border-color: #C7D2FE; margin-top: 8px;"></div>
+        <div class="card-badge" id="candidate-voice-feedback" style="display: none; background-color: #E0E7FF; color: #3730A3; border-color: #C7D2FE; margin-top: 6px;"></div>
       </div>
 
-      <!-- 按「是的，下一步」→切換到 「提問與確認頁面」 -->
       <button type="button" class="btn-large btn-accent mb-18" id="btn-candidate-next">是的，下一步</button>
 
       <div class="card-box">
@@ -172,62 +167,131 @@
       </div>
     </section>
 
-    <!-- 6. 提問與確認頁面 (支援多題接續確認與份量選擇聯動) -->
+    <!-- 6. 提問與確認頁面 (需求 1 & 5：單步逐步跳出 + 高對比長者友善選項卡片) -->
     <section class="app-screen" id="screen-clarify">
       <div class="card-box mb-14">
         <div class="card-title">菜色與份量確認</div>
         <div class="card-text">修正後菜色：豆腐、青菜、白飯</div>
       </div>
 
-      <!-- 份量選擇 (點選切換：半碗飯 / 一碗飯 / 少於半碗) -->
+      <!-- 份量選擇 -->
       <div class="card-box mb-14">
         <div class="card-title">實際吃了多少？</div>
         <button type="button" class="btn-large btn-primary mb-10" id="btn-portion-select">半碗飯 / 可修改</button>
         <div class="card-badge" id="portion-status-badge">已選擇：半碗飯</div>
       </div>
 
-      <!-- 連續確認問題 1：烹調方式 -->
+      <!-- 連續確認問題 1：豆腐烹調方式 (初始可見) -->
       <div class="clarify-step-box" id="clarify-q1-box">
-        <div class="card-title">問題 1：豆腐是煎的還是蒸的？</div>
-        <div class="option-grid">
-          <button type="button" class="option-btn q1-opt selected" data-val="蒸的">蒸的</button>
-          <button type="button" class="option-btn q1-opt" data-val="煎的">煎的</button>
+        <div class="clarify-step-header">
+          <span class="step-num-badge">1</span>
+          <span class="step-title-text">豆腐是煎的還是蒸的？</span>
         </div>
-        <div class="btn-row">
-          <button type="button" class="btn-large btn-primary" id="btn-q1-voice">語音回答</button>
-          <button type="button" class="btn-large btn-primary" id="btn-q1-skip">不知道／略過</button>
+        <div class="option-vertical-list">
+          <div class="elder-option-card q1-card selected" data-val="蒸的">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">蒸的</span>
+              <span class="opt-sub-desc">口感軟嫩、清淡少油</span>
+            </div>
+          </div>
+          <div class="elder-option-card q1-card" data-val="煎的">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">煎的</span>
+              <span class="opt-sub-desc">金黃香酥、微有用油</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-sub-row">
+          <button type="button" class="btn-voice-opt" id="btn-q1-voice">語音回答</button>
+          <button type="button" class="btn-skip-opt" id="btn-q1-skip">不知道／略過</button>
         </div>
         <div class="card-badge" id="q1-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：蒸的</div>
       </div>
 
-      <!-- 連續確認問題 2：醬油用量 (需求7) -->
-      <div class="clarify-step-box" id="clarify-q2-box">
-        <div class="card-title">問題 2：料理時加入了多少醬油？</div>
-        <div class="option-grid">
-          <button type="button" class="option-btn q2-opt selected" data-val="少許／一茶匙">少許／一茶匙</button>
-          <button type="button" class="option-btn q2-opt" data-val="正常鹹度">正常鹹度</button>
-          <button type="button" class="option-btn q2-opt" data-val="偏鹹／很多">偏鹹／很多</button>
-          <button type="button" class="option-btn q2-opt" data-val="未加醬油">未加醬油</button>
+      <!-- 連續確認問題 2：醬油用量 (需求 1：回答完問題 1 後才跳出) -->
+      <div class="clarify-step-box" id="clarify-q2-box" style="display: none;">
+        <div class="clarify-step-header">
+          <span class="step-num-badge">2</span>
+          <span class="step-title-text">料理時加入了多少醬油？</span>
         </div>
-        <div class="btn-row">
-          <button type="button" class="btn-large btn-primary" id="btn-q2-voice">語音回答</button>
-          <button type="button" class="btn-large btn-primary" id="btn-q2-skip">不知道／略過</button>
+        <div class="option-vertical-list">
+          <div class="elder-option-card q2-card" data-val="未加醬油">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">未加醬油</span>
+              <span class="opt-sub-desc">原味烹調、無額外添加</span>
+            </div>
+          </div>
+          <div class="elder-option-card q2-card selected" data-val="少許／一茶匙">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">少許／一茶匙</span>
+              <span class="opt-sub-desc">清淡提味、鹽分適量</span>
+            </div>
+          </div>
+          <div class="elder-option-card q2-card" data-val="正常鹹度">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">正常鹹度</span>
+              <span class="opt-sub-desc">家常口味、一般醬汁調味</span>
+            </div>
+          </div>
+          <div class="elder-option-card q2-card" data-val="偏鹹／很多">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">偏鹹／很多</span>
+              <span class="opt-sub-desc">濃郁重口、較多淋醬</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-sub-row">
+          <button type="button" class="btn-voice-opt" id="btn-q2-voice">語音回答</button>
+          <button type="button" class="btn-skip-opt" id="btn-q2-skip">不知道／略過</button>
         </div>
         <div class="card-badge" id="q2-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：少許／一茶匙</div>
       </div>
 
-      <!-- 連續確認問題 3：用油量 (需求7) -->
-      <div class="clarify-step-box" id="clarify-q3-box">
-        <div class="card-title">問題 3：料理時加入了多少油？</div>
-        <div class="option-grid">
-          <button type="button" class="option-btn q3-opt selected" data-val="少許水煮油">少許水煮油</button>
-          <button type="button" class="option-btn q3-opt" data-val="正常用油">正常用油</button>
-          <button type="button" class="option-btn q3-opt" data-val="偏油／多油炒">偏油／多油炒</button>
-          <button type="button" class="option-btn q3-opt" data-val="無油清蒸">無油清蒸</button>
+      <!-- 連續確認問題 3：用油量 (需求 1：回答完問題 2 後才跳出) -->
+      <div class="clarify-step-box" id="clarify-q3-box" style="display: none;">
+        <div class="clarify-step-header">
+          <span class="step-num-badge">3</span>
+          <span class="step-title-text">料理時加入了多少油？</span>
         </div>
-        <div class="btn-row">
-          <button type="button" class="btn-large btn-primary" id="btn-q3-voice">語音回答</button>
-          <button type="button" class="btn-large btn-primary" id="btn-q3-skip">不知道／略過</button>
+        <div class="option-vertical-list">
+          <div class="elder-option-card q3-card" data-val="無油清蒸">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">無油清蒸</span>
+              <span class="opt-sub-desc">完全不加油、最清爽</span>
+            </div>
+          </div>
+          <div class="elder-option-card q3-card selected" data-val="少許水煮油">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">少許水煮油</span>
+              <span class="opt-sub-desc">微量潤滑、少油健康</span>
+            </div>
+          </div>
+          <div class="elder-option-card q3-card" data-val="正常用油">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">正常用油</span>
+              <span class="opt-sub-desc">家常炒菜份量</span>
+            </div>
+          </div>
+          <div class="elder-option-card q3-card" data-val="偏油／多油炒">
+            <div class="opt-indicator"></div>
+            <div class="opt-content">
+              <span class="opt-main-title">偏油／多油炒</span>
+              <span class="opt-sub-desc">油脂較豐厚</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-sub-row">
+          <button type="button" class="btn-voice-opt" id="btn-q3-voice">語音回答</button>
+          <button type="button" class="btn-skip-opt" id="btn-q3-skip">不知道／略過</button>
         </div>
         <div class="card-badge" id="q3-feedback" style="margin-top: 10px; background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0;">已確認：少許水煮油</div>
       </div>
@@ -235,7 +299,7 @@
       <button type="button" class="btn-large btn-accent" id="btn-clarify-confirm">確認菜色與份量</button>
     </section>
 
-    <!-- 7. 來源與說明 (需求6、8：聯動份量與照片模擬詳細估算數據) -->
+    <!-- 7. 來源與說明 -->
     <section class="app-screen" id="screen-explanation">
       <div class="card-box mb-14">
         <div class="card-title">來源與說明</div>
@@ -244,7 +308,6 @@
         <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法精確估算鈉含量</div>
       </div>
 
-      <!-- 需求8：依餐食照片模擬資料來源與估算數據 -->
       <div class="card-box mb-14">
         <button type="button" class="btn-large btn-primary mb-10" id="btn-toggle-basis">查看資料來源與估算數據</button>
         <div class="basis-simulation-card" id="basis-detail-box" style="display: none;">
@@ -292,7 +355,7 @@
       </div>
     </section>
 
-    <!-- 9. 分享預覽 (需求9：選擇分享對象並彈出多選清單) -->
+    <!-- 9. 分享預覽 -->
     <section class="app-screen" id="screen-share">
       <div class="card-box mb-14">
         <div class="card-title" id="share-recipient-title">接收者：家人 A</div>
@@ -313,76 +376,69 @@
       </div>
     </section>
 
-    <!-- 10. 餐食日記畫面 -->
+    <!-- 10. 餐食日記畫面 (需求 2 & 3：刪除 11/4，更新 11/9 與 11/5 的照片與菜名) -->
     <section class="app-screen" id="screen-diary">
       <div class="card-title mb-14">餐食日記</div>
 
+      <!-- 11/10 紀錄 (維持不變) -->
       <div class="timeline-item">
         <div class="timeline-date">11/10</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
-          <img src="meal.jpg" alt="真實餐食照片">
+          <img src="meal.jpg" alt="11/10 豆腐、青菜、白飯">
         </div>
         <div class="timeline-dishes">豆腐、青菜、白飯</div>
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/10">詳細資料</button>
       </div>
 
+      <!-- 11/9 紀錄 (替換為白飯、滷肉、蛋、青菜) -->
       <div class="timeline-item">
         <div class="timeline-date">11/9</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
-          <img src="meal.jpg" alt="真實餐食照片">
+          <img src="meal_1109.jpg" alt="11/9 白飯、滷肉、蛋、青菜">
         </div>
-        <div class="timeline-dishes">豆腐、青菜、白飯</div>
+        <div class="timeline-dishes">白飯、滷肉、蛋、青菜</div>
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/9">詳細資料</button>
       </div>
 
+      <!-- 11/5 紀錄 (替換為白飯、魚肉、青菜) -->
       <div class="timeline-item">
         <div class="timeline-date">11/5</div>
         <div class="food-photo-card" style="margin-bottom: 8px;">
-          <img src="meal.jpg" alt="真實餐食照片">
+          <img src="meal_1105.jpg" alt="11/5 白飯、魚肉、青菜">
         </div>
-        <div class="timeline-dishes">豆腐、青菜、白飯</div>
+        <div class="timeline-dishes">白飯、魚肉、青菜</div>
         <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/5">詳細資料</button>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-date">11/4</div>
-        <div class="food-photo-card" style="margin-bottom: 8px;">
-          <img src="meal.jpg" alt="真實餐食照片">
-        </div>
-        <div class="timeline-dishes">豆腐、青菜、白飯</div>
-        <button type="button" class="btn-detail btn-view-diary-detail" data-date="11/4">詳細資料</button>
       </div>
     </section>
 
-    <!-- 10-B. 餐食日記詳細資料畫面 -->
+    <!-- 10-B. 餐食日記詳細資料畫面 (動態依點擊日期呈現對應資訊) -->
     <section class="app-screen" id="screen-diary-detail">
       <div class="card-title mb-14" id="detail-date-title">11/10 詳細資料</div>
 
       <div class="food-photo-card photo-enlarged">
-        <img src="meal.jpg" alt="放大餐食照片">
+        <img id="detail-photo-img" src="meal.jpg" alt="放大餐食照片">
       </div>
 
       <div class="card-box mb-14">
         <div class="card-title">餐食菜色與份量確認</div>
-        <div class="card-text">已確認：豆腐、青菜、白飯</div>
+        <div class="card-text" id="diary-detail-dishes">已確認：豆腐、青菜、白飯</div>
         <div class="card-text" id="diary-detail-portion">實際食用份量：半碗飯</div>
         <div class="card-text" id="diary-detail-method">烹調方式：蒸的</div>
-        <div class="card-text" style="color: #6B7280;">調味資訊：少許醬油、少許水煮油</div>
+        <div class="card-text" id="diary-detail-seasoning" style="color: #4B5563;">調味資訊：少許醬油、少許水煮油</div>
       </div>
 
       <div class="card-box mb-14">
         <div class="card-title">來源與說明</div>
         <div class="card-text">系統依確認資訊查詢資料</div>
-        <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法估算鈉含量</div>
-        <div class="card-text" style="font-size: 16px; color: #4B5563;">
+        <div class="card-badge" style="background-color: #FEF3C7; color: #92400E; border-color: #FCD34D;">資訊不足，無法精確估算鈉含量</div>
+        <div class="card-text" id="diary-detail-basis" style="font-size: 15px; color: #4B5563;">
           選用台灣常用食品營養成分資料庫項目；未知油量、醬汁保留未知。
         </div>
       </div>
 
       <div class="card-box mb-18">
         <div class="card-title">一般資訊與建議</div>
-        <div class="card-text">可詢問醬料是否能另放</div>
-        <div class="card-badge" style="background-color: #F3F4F6; color: #4B5563; border-color: #D1D5DB;">是否採用由你決定</div>
+        <div class="card-text" id="diary-detail-suggestion">可詢問醬料是否能另放；是否採用由你決定</div>
       </div>
 
       <button type="button" class="btn-large btn-primary" id="btn-back-to-diary">&lt; 返回餐食日記</button>
@@ -415,15 +471,13 @@
       </div>
     </section>
 
-    <!-- 12. 聊天頁面 (需求5、10、11：依對象名稱顯示、長者/家屬視角切換、AI助手專屬禮貌回覆) -->
+    <!-- 12. 聊天頁面 -->
     <section class="app-screen" id="screen-chat-detail">
       <div class="card-badge" id="chat-perspective-badge">長者端視角｜林陳桂華 女士</div>
 
-      <div class="chat-messages" id="chat-messages-container">
-        <!-- 訊息泡泡將由 JS 根據視角與對象動態產生 -->
-      </div>
+      <div class="chat-messages" id="chat-messages-container"></div>
 
-      <!-- 聊天輸入與操作區 (依對象與視角動態調整) -->
+      <!-- 聊天輸入與操作區 -->
       <div class="chat-input-area" id="chat-input-container">
         <!-- 家屬端之回覆與潤飾按鈕區塊 -->
         <div id="family-input-controls">
@@ -443,7 +497,7 @@
           </div>
         </div>
 
-        <!-- AI助手專屬之長者提問輸入控制 (需求11：無家人潤飾按鈕) -->
+        <!-- AI助手專屬之長者提問輸入控制 -->
         <div id="ai-input-controls" style="display: none;">
           <textarea class="chat-textarea" id="chat-ai-input-text" placeholder="向 AI 助手提問餐食建議..."></textarea>
           <button type="button" class="btn-large btn-accent" id="btn-ai-ask-reply">送出提問</button>
@@ -485,7 +539,7 @@
       </button>
     </nav>
 
-    <!-- 13. AI 協助修改語氣彈窗 (PDF 畫面 F) -->
+    <!-- 13. AI 協助修改語氣彈窗 -->
     <div class="modal-overlay" id="modal-ai-refine">
       <div class="modal-window">
         <div class="modal-title">家人回應</div>
@@ -524,7 +578,7 @@
       </div>
     </div>
 
-    <!-- 14. 選擇分享對象之多選列表彈窗 (需求9) -->
+    <!-- 14. 選擇分享對象彈窗 -->
     <div class="modal-overlay" id="modal-recipients">
       <div class="modal-window">
         <div class="modal-title">選擇分享對象</div>
